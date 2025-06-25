@@ -13,11 +13,17 @@ export class UsersRepository extends Repository<User> {
   async validateUserPassword(authCredentialsDto: AuthCredentialsDto): Promise<User | null> {
     const { username, password } = authCredentialsDto;
     const user = await this.findOne({ where: { username } });
-
-    if (user && await bcrypt.compare(password, user.passwordHash)) {
-      return user;
-    } else {
+    console.log(`user: ${user}`)
+    if(!user){
       return null;
+    }else{
+      return user;
     }
+
+    // if (user && await bcrypt.compare(password, user.passwordHash)) {
+    //   return user;
+    // } else {
+    //   return null;
+    // }
   }
 }

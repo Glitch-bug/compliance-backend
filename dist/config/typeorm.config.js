@@ -14,7 +14,7 @@ exports.typeOrmAsyncConfig = {
             password: configService.get('DB_PASSWORD'),
             database: configService.get('DB_DATABASE'),
             entities: [__dirname + '/../**/*.entity.{js,ts}'],
-            synchronize: false,
+            synchronize: true,
             logging: true,
         };
     },

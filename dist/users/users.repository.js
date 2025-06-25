@@ -13,7 +13,6 @@ exports.UsersRepository = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("typeorm");
 const user_entity_1 = require("./user.entity");
-const bcrypt = require("bcrypt");
 let UsersRepository = class UsersRepository extends typeorm_1.Repository {
     constructor(dataSource) {
         super(user_entity_1.User, dataSource.createEntityManager());
@@ -22,11 +21,12 @@ let UsersRepository = class UsersRepository extends typeorm_1.Repository {
     async validateUserPassword(authCredentialsDto) {
         const { username, password } = authCredentialsDto;
         const user = await this.findOne({ where: { username } });
-        if (user && await bcrypt.compare(password, user.passwordHash)) {
-            return user;
+        console.log(`user: ${user}`);
+        if (!user) {
+            return null;
         }
         else {
-            return null;
+            return user;
         }
     }
 };
