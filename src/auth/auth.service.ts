@@ -28,7 +28,7 @@ export class AuthService {
     this.logger.debug(`Generated JWT Token with payload ${JSON.stringify(payload)}`);
     
     // Do not send password back
-    const { passwordHash, ...userProfile } = user;
+    const {...userProfile } = user;
 
     return { accessToken, user: userProfile };
   }
