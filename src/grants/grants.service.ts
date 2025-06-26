@@ -14,6 +14,7 @@ export class GrantsService {
   ) {}
 
   async create(createGrantDto: CreateGrantDto, user: User): Promise<Grant> {
+	  console.log(`user fro backend: ${user.mda}`)
     const grant = this.grantsRepository.create({
       ...createGrantDto,
       mda: user.mda,

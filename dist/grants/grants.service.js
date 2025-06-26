@@ -22,6 +22,7 @@ let GrantsService = class GrantsService {
         this.grantsRepository = grantsRepository;
     }
     async create(createGrantDto, user) {
+        console.log(`user fro backend: ${user.mda}`);
         const grant = this.grantsRepository.create({
             ...createGrantDto,
             mda: user.mda,
