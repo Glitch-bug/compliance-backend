@@ -22,7 +22,7 @@ import { InsightsModule } from './insights/insights.module';
     AssetsModule,
     ChecklistsModule,
     AdminModule,
-    InsightsModule
+    InsightsModule,
   ],
 })
 export class AppModule {}

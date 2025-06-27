@@ -1,3 +1,46 @@
+#!/bin/bash
+# populate_insights_module_live_ai.sh - Generates the AI Insights module with a real AI service call.
+# Run this script from the root of the 'backend' project directory.
+
+echo "--- Populating AI Insights module with Live API Call ---"
+
+# Check if we are in the backend directory
+if [ ! -f "package.json" ] || [ ! -d "src" ]; then
+    echo "Error: This script must be run from the root of the 'backend' project directory."
+    exit 1
+fi
+
+# --- Pre-requisites ---
+echo ""
+echo "Step 1: Installing new dependency for HTTP requests..."
+npm install @nestjs/axios axios
+echo ""
+echo "Step 2: Add your AI provider's API key to the .env file."
+echo "Add the following line to your 'backend/.env' file:"
+echo "AI_API_KEY=your_ai_api_key_here"
+echo ""
+echo "Press Enter to continue once you have updated your .env file..."
+read
+
+# --- Module Generation ---
+
+# 1. Create the directory structure for the new module (if it doesn't exist)
+mkdir -p src/insights/dto
+
+# 2. Create/overwrite the DTO for incoming queries
+cat > src/insights/dto/generate-insight.dto.ts << 'EOF'
+// src/insights/dto/generate-insight.dto.ts
+import { IsString, IsNotEmpty } from 'class-validator';
+
+export class GenerateInsightDto {
+  @IsString()
+  @IsNotEmpty()
+  query: string;
+}
+EOF
+
+# 3. Create/overwrite the Insights Service to call the external AI
+cat > src/insights/insights.service.ts << 'EOF'
 // src/insights/insights.service.ts
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -69,8 +112,6 @@ export class InsightsService {
 
       this.logger.log('Received response from AI service.');
       
-      console.log(`Data received: ${response.data.candidates[0]?.content?.parts[0]?.text}`);
-
       const rawText = response.data.candidates[0]?.content?.parts[0]?.text;
       if (!rawText) {
           throw new Error('Invalid response structure from AI service.');
@@ -125,3 +166,65 @@ export class InsightsService {
     `;
   }
 }
+EOF
+
+# 4. Create/overwrite the Insights Controller
+cat > src/insights/insights.controller.ts << 'EOF'
+// src/insights/insights.controller.ts
+import { Controller, Post, Body, UseGuards, HttpCode } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { InsightsService } from './insights.service';
+import { GenerateInsightDto } from './dto/generate-insight.dto';
+
+@Controller('insights')
+@UseGuards(AuthGuard())
+export class InsightsController {
+  constructor(private readonly insightsService: InsightsService) {}
+
+  @Post('/report')
+  @HttpCode(200) // Ensure POST returns 200 OK on success
+  generateReport(@Body() generateInsightDto: GenerateInsightDto) {
+    return this.insightsService.generateReport(generateInsightDto.query);
+  }
+}
+EOF
+
+# 5. Create/overwrite the Insights Module to include HttpModule
+cat > src/insights/insights.module.ts << 'EOF'
+// src/insights/insights.module.ts
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { HttpModule } from '@nestjs/axios';
+import { AuthModule } from '../auth/auth.module';
+import { Request as RequestEntity } from '../requests/request.entity';
+import { InsightsController } from './insights.controller';
+import { InsightsService } from './insights.service';
+
+@Module({
+  imports: [
+    TypeOrmModule.forFeature([RequestEntity]),
+    AuthModule,
+    HttpModule, // Import HttpModule to make external API calls
+  ],
+  controllers: [InsightsController],
+  providers: [InsightsService],
+})
+export class InsightsModule {}
+EOF
+
+# 6. Ensure the main AppModule includes the InsightsModule
+# This check prevents duplicate entries if the script is run more than once.
+if ! grep -q "InsightsModule" "src/app.module.ts"; then
+    echo "Updating src/app.module.ts to include InsightsModule..."
+    sed -i "/import { AdminModule } from '.\/admin\/admin.module';/a import { InsightsModule } from '.\/insights\/insights.module';'" src/app.module.ts
+    sed -i "/AdminModule,/a \ \ \ \ InsightsModule," src/app.module.ts
+else
+    echo "InsightsModule is already present in src/app.module.ts."
+fi
+
+echo ""
+echo "--- AI Insights module updated for live API calls. ---"
+echo "A new dependency '@nestjs/axios' was installed."
+echo "The endpoint POST /insights/report will now call the configured AI service."
+echo "Please ensure your AI_API_KEY in the .env file is valid."
+echo "You can now restart your development server with 'npm run start:dev'."
