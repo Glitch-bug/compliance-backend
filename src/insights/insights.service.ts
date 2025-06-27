@@ -5,7 +5,19 @@ import { Repository } from 'typeorm';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
+import { AxiosError, AxiosResponse } from 'axios';
 import { Request as RequestEntity } from '../requests/request.entity';
+
+// Define a type for the expected Gemini API response structure for better type safety
+interface GeminiResponse {
+  candidates: Array<{
+    content: {
+      parts: Array<{
+        text: string;
+      }>;
+    };
+  }>;
+}
 
 @Injectable()
 export class InsightsService {
@@ -28,33 +40,26 @@ export class InsightsService {
       throw new Error('AI_API_KEY is not configured in the .env file.');
     }
     
-    // 1. Fetch all requests from the database. In a larger system, you might filter this first.
     const requests = await this.requestsRepository.find();
     
     if (requests.length === 0) {
       return { summary: 'There is no request data available to analyze.', report: null };
     }
 
-    // 2. Format the data and the prompt for the AI model.
     const prompt = this.buildPrompt(query, requests);
     
-    // 3. Define the payload for the Gemini API
     const payload = {
       contents: [{
         parts: [{ "text": prompt }]
       }],
-      // We can add safety settings and generation config here if needed
     };
 
-    const headers = {
-      'Content-Type': 'application/json',
-    };
+    const headers = { 'Content-Type': 'application/json' };
     
     this.logger.log('Sending request to AI service...');
 
     try {
-      // 4. Make the external API call
-      const response = await firstValueFrom(
+      const response: AxiosResponse<GeminiResponse> = await firstValueFrom(
         this.httpService.post(
           `${this.geminiApiUrl}?key=${apiKey}`,
           payload,
@@ -64,22 +69,27 @@ export class InsightsService {
 
       this.logger.log('Received response from AI service.');
       
-      // 5. Extract and parse the AI's response text
-      const rawText = response.data.candidates[0].content.parts[0].text;
+      const rawText = response.data.candidates[0]?.content?.parts[0]?.text;
+      if (!rawText) {
+          throw new Error('Invalid response structure from AI service.');
+      }
       
-      // Clean the response by removing markdown backticks for JSON
       const cleanJsonText = rawText.replace(/```json\n?|```/g, '');
       
       return JSON.parse(cleanJsonText);
 
     } catch (error) {
-      this.logger.error('Error calling AI service:', error.response?.data || error.message);
+      // Use AxiosError type guard to safely access response data
+      if (error instanceof AxiosError) {
+        this.logger.error('Error calling AI service:', error.response?.data || error.message);
+      } else {
+        this.logger.error('An unexpected error occurred:', error);
+      }
       throw new Error('Failed to get insights from the AI service.');
     }
   }
 
   private buildPrompt(query: string, requests: RequestEntity[]): string {
-    // Convert the raw data into a simpler, string-based format for the AI
     const dataAsString = requests.map(r => 
       `Request(id=${r.id}, title='${r.title}', mda='${r.mda}', amount=${r.amount}, status='${r.status}', riskScore=${r.riskScore || 'N/A'})`
     ).join('\n');
