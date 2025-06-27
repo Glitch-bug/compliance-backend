@@ -28,6 +28,7 @@ let GrantsController = class GrantsController {
         return this.grantsService.create(createGrantDto, user);
     }
     findAll(user) {
+        console.log(`get response ${user}`);
         return this.grantsService.findAll(user);
     }
 };

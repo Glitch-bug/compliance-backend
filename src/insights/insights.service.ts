@@ -70,6 +70,7 @@ export class InsightsService {
       this.logger.log('Received response from AI service.');
       
       console.log(`Data received: ${response.data.candidates[0]?.content?.parts[0]?.text}`);
+
       const rawText = response.data.candidates[0]?.content?.parts[0]?.text;
       if (!rawText) {
           throw new Error('Invalid response structure from AI service.');

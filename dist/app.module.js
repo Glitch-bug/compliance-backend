@@ -35,6 +35,7 @@ exports.AppModule = AppModule = __decorate([
             checklists_module_1.ChecklistsModule,
             admin_module_1.AdminModule,
             insights_module_1.InsightsModule,
+
         ],
     })
 ], AppModule);
