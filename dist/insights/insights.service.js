@@ -20,6 +20,7 @@ const typeorm_2 = require("typeorm");
 const axios_1 = require("@nestjs/axios");
 const config_1 = require("@nestjs/config");
 const rxjs_1 = require("rxjs");
+const axios_2 = require("axios");
 const request_entity_1 = require("../requests/request.entity");
 let InsightsService = InsightsService_1 = class InsightsService {
     constructor(requestsRepository, httpService, configService) {
@@ -44,19 +45,26 @@ let InsightsService = InsightsService_1 = class InsightsService {
                     parts: [{ "text": prompt }]
                 }],
         };
-        const headers = {
-            'Content-Type': 'application/json',
-        };
+        const headers = { 'Content-Type': 'application/json' };
         this.logger.log('Sending request to AI service...');
         try {
             const response = await (0, rxjs_1.firstValueFrom)(this.httpService.post(`${this.geminiApiUrl}?key=${apiKey}`, payload, { headers }));
             this.logger.log('Received response from AI service.');
-            const rawText = response.data.candidates[0].content.parts[0].text;
+            console.log(`Data received: ${response.data.candidates[0]?.content?.parts[0]?.text}`);
+            const rawText = response.data.candidates[0]?.content?.parts[0]?.text;
+            if (!rawText) {
+                throw new Error('Invalid response structure from AI service.');
+            }
             const cleanJsonText = rawText.replace(/```json\n?|```/g, '');
             return JSON.parse(cleanJsonText);
         }
         catch (error) {
-            this.logger.error('Error calling AI service:', error.response?.data || error.message);
+            if (error instanceof axios_2.AxiosError) {
+                this.logger.error('Error calling AI service:', error.response?.data || error.message);
+            }
+            else {
+                this.logger.error('An unexpected error occurred:', error);
+            }
             throw new Error('Failed to get insights from the AI service.');
         }
     }

@@ -18,6 +18,7 @@ const grants_module_1 = require("./grants/grants.module");
 const assets_module_1 = require("./assets/assets.module");
 const checklists_module_1 = require("./checklists/checklists.module");
 const admin_module_1 = require("./admin/admin.module");
+const insights_module_1 = require("./insights/insights.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -33,6 +34,7 @@ exports.AppModule = AppModule = __decorate([
             assets_module_1.AssetsModule,
             checklists_module_1.ChecklistsModule,
             admin_module_1.AdminModule,
+            insights_module_1.InsightsModule,
         ],
     })
 ], AppModule);
