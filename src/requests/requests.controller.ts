@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, UseGuards, SetMetadata } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, UseGuards, SetMetadata, Query } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../shared/user.decorator';
 import { User } from '../users/user.entity';
@@ -20,8 +20,8 @@ export class RequestsController {
   }
 
   @Get()
-  findAll(@GetUser() user: User) {
-    return this.requestsService.findAll(user);
+  findAll(@GetUser() user: User, @Query('mda') mda?: string) {
+    return this.requestsService.findAll(user, mda);
   }
   
   @Get('/review')
