@@ -1,5 +1,5 @@
 // src/checklists/checklists.controller.ts
-import { Controller, Get, Post, Body, Patch, Param, UseGuards, SetMetadata } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, UseGuards, SetMetadata, Query } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../shared/user.decorator';
 import { User } from '../users/user.entity';
@@ -22,8 +22,8 @@ export class ChecklistsController {
   }
   
   @Get()
-  findAllActive(@GetUser() user: User) {
-    return this.checklistsService.findAllActive(user);
+  findAllActive(@GetUser() user: User, @Query('mda') mda?: string) {
+    return this.checklistsService.findAllActive(user, mda);
   }
 
   @Patch(':id')

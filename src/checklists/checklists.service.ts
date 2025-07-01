@@ -7,6 +7,7 @@ import { ChecklistTemplate } from './checklist-template.entity';
 import { CreateActiveChecklistDto } from './dto/create-active-checklist.dto';
 import { UpdateActiveChecklistDto } from './dto/update-active-checklist.dto';
 import { User } from '../users/user.entity';
+import { Role } from 'src/users/roles.enum';
 
 @Injectable()
 export class ChecklistsService {
@@ -37,10 +38,16 @@ export class ChecklistsService {
     return this.activeChecklistsRepository.save(activeChecklist);
   }
   
-  async findAllActive(user: User): Promise<ActiveChecklist[]> {
-    const universalRoles = ['MoF Compliance', 'IAA Auditor', 'Minister', 'System Admin'];
+  async findAllActive(user: User, mda?: string): Promise<ActiveChecklist[]> {
+    const universalRoles: Role[] = [Role.MoF, Role.IAA, Role.Minister, Role.Admin];
+
     if (universalRoles.includes(user.role)) {
-      return this.activeChecklistsRepository.find();
+      if (mda && mda !== 'National') {
+        return this.activeChecklistsRepository.find({ where: { mda: mda } });
+      }else {
+        return this.activeChecklistsRepository.find();
+      }
+
     }
     return this.activeChecklistsRepository.find({ where: { mda: user.mda } });
   }
