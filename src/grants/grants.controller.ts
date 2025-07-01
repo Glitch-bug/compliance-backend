@@ -24,6 +24,7 @@ export class GrantsController {
 
   @Get()
   findAll(@GetUser() user: User) {
+    console.log(`get response ${user}`)
     return this.grantsService.findAll(user);
   }
 
