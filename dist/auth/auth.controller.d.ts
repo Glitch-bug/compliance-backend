@@ -12,7 +12,7 @@ export declare class AuthController {
         id: string;
         username: string;
         fullName: string;
-        role: string;
+        role: import("../users/roles.enum").Role;
         mda: string;
         isActive: boolean;
         createdAt: Date;

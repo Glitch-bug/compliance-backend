@@ -20,6 +20,8 @@ const user_entity_1 = require("../users/user.entity");
 const roles_guard_1 = require("../auth/guards/roles.guard");
 const assets_service_1 = require("./assets.service");
 const create_asset_dto_1 = require("./dto/create-asset.dto");
+const roles_enum_1 = require("../users/roles.enum");
+const public_decorator_1 = require("../auth/decorator/public.decorator");
 let AssetsController = class AssetsController {
     constructor(assetsService) {
         this.assetsService = assetsService;
@@ -27,8 +29,14 @@ let AssetsController = class AssetsController {
     create(createAssetDto, user) {
         return this.assetsService.create(createAssetDto, user);
     }
-    findAll(user) {
-        return this.assetsService.findAll(user);
+    findAll(user, mda) {
+        return this.assetsService.findAll(user, mda);
+    }
+    findOne(id) {
+        return this.assetsService.findOne(id);
+    }
+    remove(id) {
+        return this.assetsService.remove(id);
     }
 };
 exports.AssetsController = AssetsController;
@@ -45,10 +53,26 @@ __decorate([
 __decorate([
     (0, common_1.Get)(),
     __param(0, (0, user_decorator_1.GetUser)()),
+    __param(1, (0, common_1.Query)('mda')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [user_entity_1.User]),
+    __metadata("design:paramtypes", [user_entity_1.User, String]),
     __metadata("design:returntype", void 0)
 ], AssetsController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], AssetsController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    (0, public_decorator_1.Roles)(roles_enum_1.Role.Admin),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], AssetsController.prototype, "remove", null);
 exports.AssetsController = AssetsController = __decorate([
     (0, common_1.Controller)('assets'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)()),

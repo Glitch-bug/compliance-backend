@@ -5,6 +5,7 @@ import { UsersRepository } from '../users/users.repository';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { JwtPayload } from './jwt-payload.interface';
 import { User } from '../users/user.entity';
+import { Role } from 'src/users/roles.enum';
 
 @Injectable()
 export class AuthService {
@@ -16,20 +17,33 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async login(authCredentialsDto: AuthCredentialsDto): Promise<{ accessToken: string, user: any }> {
-    const user = await this.usersRepository.validateUserPassword(authCredentialsDto);
+async login(authCredentialsDto: AuthCredentialsDto): Promise<{ accessToken: string, user: any }> {
+      const universalRoles: Role[] = [Role.MoF, Role.IAA, Role.Minister, Role.Admin];
 
-    if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
+  const user = await this.usersRepository.validateUserPassword(authCredentialsDto);
 
-    const payload: JwtPayload = { username: user.username };
-    const accessToken = await this.jwtService.sign(payload);
-    this.logger.debug(`Generated JWT Token with payload ${JSON.stringify(payload)}`);
-    
-    // Do not send password back
-    const {...userProfile } = user;
-
-    return { accessToken, user: userProfile };
+  if (!user) {
+    throw new UnauthorizedException('Invalid credentials');
   }
+
+  const isUniversal = universalRoles.includes(user.role);
+  this.logger.debug(`universal ${isUniversal} role ${user.role}`);
+
+  // If user is not universal, they must match the selected MDA
+  if (!isUniversal && user.mda != authCredentialsDto.mda) {
+    throw new UnauthorizedException('You can only access your assigned MDA');
+  }
+
+  const payload: JwtPayload = { username: user.username };
+  const accessToken = this.jwtService.sign(payload);
+  this.logger.debug(`Generated JWT Token with payload ${JSON.stringify(payload)}`);
+
+  const userProfile = {
+    ...user,
+    activeMda: authCredentialsDto.mda, // use selected MDA
+  };
+
+  return { accessToken, user: userProfile };
+}
+
 }

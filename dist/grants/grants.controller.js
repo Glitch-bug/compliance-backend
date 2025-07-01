@@ -20,6 +20,8 @@ const user_entity_1 = require("../users/user.entity");
 const roles_guard_1 = require("../auth/guards/roles.guard");
 const grants_service_1 = require("./grants.service");
 const create_grant_dto_1 = require("./dto/create-grant.dto");
+const roles_enum_1 = require("../users/roles.enum");
+const public_decorator_1 = require("../auth/decorator/public.decorator");
 let GrantsController = class GrantsController {
     constructor(grantsService) {
         this.grantsService = grantsService;
@@ -29,6 +31,12 @@ let GrantsController = class GrantsController {
     }
     findAll(user) {
         return this.grantsService.findAll(user);
+    }
+    findOne(id) {
+        return this.grantsService.findOne(id);
+    }
+    remove(id) {
+        return this.grantsService.remove(id);
     }
 };
 exports.GrantsController = GrantsController;
@@ -49,6 +57,21 @@ __decorate([
     __metadata("design:paramtypes", [user_entity_1.User]),
     __metadata("design:returntype", void 0)
 ], GrantsController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], GrantsController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    (0, public_decorator_1.Roles)(roles_enum_1.Role.Admin),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], GrantsController.prototype, "remove", null);
 exports.GrantsController = GrantsController = __decorate([
     (0, common_1.Controller)('grants'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)()),

@@ -6,5 +6,7 @@ export declare class GrantsService {
     private grantsRepository;
     constructor(grantsRepository: Repository<Grant>);
     create(createGrantDto: CreateGrantDto, user: User): Promise<Grant>;
-    findAll(user: User): Promise<Grant[]>;
+    findAll(user: User, mda?: string): Promise<Grant[]>;
+    findOne(id: string): Promise<Grant>;
+    remove(id: string): Promise<void>;
 }

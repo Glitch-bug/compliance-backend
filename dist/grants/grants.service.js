@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const grant_entity_1 = require("./grant.entity");
+const roles_enum_1 = require("../users/roles.enum");
 let GrantsService = class GrantsService {
     constructor(grantsRepository) {
         this.grantsRepository = grantsRepository;
@@ -30,12 +31,30 @@ let GrantsService = class GrantsService {
         });
         return this.grantsRepository.save(grant);
     }
-    async findAll(user) {
-        const universalRoles = ['MoF Compliance', 'IAA Auditor', 'Minister', 'System Admin'];
+    async findAll(user, mda) {
+        const universalRoles = [roles_enum_1.Role.MoF, roles_enum_1.Role.IAA, roles_enum_1.Role.Minister, roles_enum_1.Role.Admin];
         if (universalRoles.includes(user.role)) {
-            return this.grantsRepository.find();
+            if (mda && mda !== 'National') {
+                return this.grantsRepository.find({ where: { mda } });
+            }
+            else {
+                return this.grantsRepository.find();
+            }
         }
         return this.grantsRepository.find({ where: { mda: user.mda } });
+    }
+    async findOne(id) {
+        const grant = await this.grantsRepository.findOneBy({ id });
+        if (!grant) {
+            throw new common_1.NotFoundException(`Grant with ID "\${id}" not found`);
+        }
+        return grant;
+    }
+    async remove(id) {
+        const result = await this.grantsRepository.delete(id);
+        if (result.affected === 0) {
+            throw new common_1.NotFoundException(`Grant with ID "\${id}" not found`);
+        }
     }
 };
 exports.GrantsService = GrantsService;

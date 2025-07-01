@@ -9,28 +9,35 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AuthCredentialsDto = void 0;
+exports.CreateUserDto = void 0;
 const class_validator_1 = require("class-validator");
-class AuthCredentialsDto {
+const roles_enum_1 = require("../roles.enum");
+class CreateUserDto {
 }
-exports.AuthCredentialsDto = AuthCredentialsDto;
+exports.CreateUserDto = CreateUserDto;
+__decorate([
+    (0, class_validator_1.IsEmail)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], CreateUserDto.prototype, "email", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)({ message: 'Username should not be empty.' }),
-    (0, class_validator_1.MinLength)(4, { message: 'Username must be at least 4 characters long.' }),
-    (0, class_validator_1.MaxLength)(20, { message: 'Username must be at most 20 characters long.' }),
+    (0, class_validator_1.MinLength)(8),
     __metadata("design:type", String)
-], AuthCredentialsDto.prototype, "username", void 0);
+], CreateUserDto.prototype, "password", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)({ message: 'Password should not be empty.' }),
-    (0, class_validator_1.MinLength)(8, { message: 'Password must be at least 8 characters long.' }),
-    (0, class_validator_1.MaxLength)(32, { message: 'Password must be at most 32 characters long.' }),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
-], AuthCredentialsDto.prototype, "password", void 0);
+], CreateUserDto.prototype, "name", void 0);
+__decorate([
+    (0, class_validator_1.IsEnum)(roles_enum_1.Role),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateUserDto.prototype, "role", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)({ message: "MDA must be selected" }),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
-], AuthCredentialsDto.prototype, "mda", void 0);
-//# sourceMappingURL=auth-credentials.dto.js.map
+], CreateUserDto.prototype, "mda", void 0);
+//# sourceMappingURL=create-user.dto.js.map

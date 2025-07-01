@@ -1,4 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, BaseEntity } from 'typeorm';
+import { Role } from './roles.enum';
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -14,8 +15,12 @@ export class User extends BaseEntity {
   @Column({ name: 'full_name' })
   fullName: string;
 
-  @Column()
-  role: string;
+  @Column({
+    type: 'enum',
+    enum: Role,
+    default: Role.MDA,
+  })
+  role: Role;
 
   @Column({ nullable: true })
   mda: string;
