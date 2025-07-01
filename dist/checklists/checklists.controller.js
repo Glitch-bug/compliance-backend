@@ -32,6 +32,7 @@ let ChecklistsController = class ChecklistsController {
         return this.checklistsService.findAllActive(user);
     }
     updateActive(id, updateDto) {
+        console.log(`update DTO : ${JSON.stringify(updateDto)}`);
         return this.checklistsService.updateActiveChecklist(id, updateDto);
     }
     findAllTemplates() {

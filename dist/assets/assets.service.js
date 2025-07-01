@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const asset_entity_1 = require("./asset.entity");
+const roles_enum_1 = require("../users/roles.enum");
 let AssetsService = class AssetsService {
     constructor(assetsRepository) {
         this.assetsRepository = assetsRepository;
@@ -28,12 +29,30 @@ let AssetsService = class AssetsService {
         });
         return this.assetsRepository.save(asset);
     }
-    async findAll(user) {
-        const universalRoles = ['MoF Compliance', 'IAA Auditor', 'Minister', 'System Admin'];
+    async findAll(user, mda) {
+        const universalRoles = [roles_enum_1.Role.MoF, roles_enum_1.Role.IAA, roles_enum_1.Role.Minister, roles_enum_1.Role.Admin];
         if (universalRoles.includes(user.role)) {
-            return this.assetsRepository.find();
+            if (mda && mda !== 'National') {
+                return this.assetsRepository.find({ where: { mda: mda } });
+            }
+            else {
+                return this.assetsRepository.find();
+            }
         }
         return this.assetsRepository.find({ where: { mda: user.mda } });
+    }
+    async findOne(id) {
+        const asset = await this.assetsRepository.findOneBy({ id });
+        if (!asset) {
+            throw new common_1.NotFoundException(`Asset with ID ${id} not found`);
+        }
+        return asset;
+    }
+    async remove(id) {
+        const result = await this.assetsRepository.delete(id);
+        if (result.affected === 0) {
+            throw new common_1.NotFoundException(`Asset with ${id} not found`);
+        }
     }
 };
 exports.AssetsService = AssetsService;

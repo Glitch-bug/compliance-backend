@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const jwt_1 = require("@nestjs/jwt");
 const typeorm_1 = require("@nestjs/typeorm");
 const users_repository_1 = require("../users/users.repository");
+const roles_enum_1 = require("../users/roles.enum");
 let AuthService = class AuthService {
     constructor(usersRepository, jwtService) {
         this.usersRepository = usersRepository;
@@ -24,14 +25,23 @@ let AuthService = class AuthService {
         this.logger = new common_1.Logger('AuthService');
     }
     async login(authCredentialsDto) {
+        const universalRoles = [roles_enum_1.Role.MoF, roles_enum_1.Role.IAA, roles_enum_1.Role.Minister, roles_enum_1.Role.Admin];
         const user = await this.usersRepository.validateUserPassword(authCredentialsDto);
         if (!user) {
             throw new common_1.UnauthorizedException('Invalid credentials');
         }
+        const isUniversal = universalRoles.includes(user.role);
+        this.logger.debug(`universal ${isUniversal} role ${user.role}`);
+        if (!isUniversal && user.mda != authCredentialsDto.mda) {
+            throw new common_1.UnauthorizedException('You can only access your assigned MDA');
+        }
         const payload = { username: user.username };
-        const accessToken = await this.jwtService.sign(payload);
+        const accessToken = this.jwtService.sign(payload);
         this.logger.debug(`Generated JWT Token with payload ${JSON.stringify(payload)}`);
-        const { ...userProfile } = user;
+        const userProfile = {
+            ...user,
+            activeMda: authCredentialsDto.mda,
+        };
         return { accessToken, user: userProfile };
     }
 };

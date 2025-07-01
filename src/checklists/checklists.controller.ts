@@ -30,6 +30,7 @@ export class ChecklistsController {
   @UseGuards(RolesGuard)
   @SetMetadata('roles', ['MDA'])
   updateActive(@Param('id') id: string, @Body() updateDto: UpdateActiveChecklistDto) {
+	  console.log(`update DTO : ${JSON.stringify(updateDto)}`);
     return this.checklistsService.updateActiveChecklist(id, updateDto);
   }
 

@@ -1,16 +1,19 @@
 // src/grants/grants.controller.ts
-import { Controller, Get, Post, Body, UseGuards, SetMetadata } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, SetMetadata, Param, Delete, Patch } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../shared/user.decorator';
 import { User } from '../users/user.entity';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { GrantsService } from './grants.service';
 import { CreateGrantDto } from './dto/create-grant.dto';
+import { Role } from 'src/users/roles.enum';
+import { Roles } from 'src/auth/decorator/public.decorator';
+
 
 @Controller('grants')
 @UseGuards(AuthGuard())
 export class GrantsController {
-  constructor(private readonly grantsService: GrantsService) {}
+  constructor(private readonly grantsService: GrantsService) { }
 
   @Post()
   @UseGuards(RolesGuard)
@@ -23,5 +26,16 @@ export class GrantsController {
   findAll(@GetUser() user: User) {
     console.log(`get response ${user}`)
     return this.grantsService.findAll(user);
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.grantsService.findOne(id);
+  }
+
+  @Delete(':id')
+  @Roles(Role.Admin)
+  remove(@Param('id') id: string) {
+    return this.grantsService.remove(id);
   }
 }

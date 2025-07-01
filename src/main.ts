@@ -9,7 +9,7 @@ async function bootstrap() {
     origin: true, // Allow all origins for simplicity, tighten in production
     credentials: true,
   });
-
+  //red
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   await app.listen(3001);

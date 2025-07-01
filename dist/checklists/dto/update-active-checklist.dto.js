@@ -14,6 +14,14 @@ const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
 class ChecklistItemDto {
 }
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], ChecklistItemDto.prototype, "text", void 0);
+__decorate([
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], ChecklistItemDto.prototype, "completed", void 0);
 class UpdateActiveChecklistDto {
 }
 exports.UpdateActiveChecklistDto = UpdateActiveChecklistDto;
