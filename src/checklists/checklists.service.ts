@@ -42,7 +42,7 @@ export class ChecklistsService {
     const universalRoles: Role[] = [Role.MoF, Role.IAA, Role.Minister, Role.Admin];
 
     if (universalRoles.includes(user.role)) {
-      if (mda && mda !== 'National') {
+      if (mda && mda !== 'All MDAs') {
         return this.activeChecklistsRepository.find({ where: { mda: mda } });
       }else {
         return this.activeChecklistsRepository.find();

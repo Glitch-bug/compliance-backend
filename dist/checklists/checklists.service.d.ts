@@ -9,7 +9,7 @@ export declare class ChecklistsService {
     private checklistTemplatesRepository;
     constructor(activeChecklistsRepository: Repository<ActiveChecklist>, checklistTemplatesRepository: Repository<ChecklistTemplate>);
     createActiveChecklist(createDto: CreateActiveChecklistDto, user: User): Promise<ActiveChecklist>;
-    findAllActive(user: User): Promise<ActiveChecklist[]>;
+    findAllActive(user: User, mda?: string): Promise<ActiveChecklist[]>;
     updateActiveChecklist(id: string, updateDto: UpdateActiveChecklistDto): Promise<ActiveChecklist>;
     findAllTemplates(): Promise<ChecklistTemplate[]>;
 }
