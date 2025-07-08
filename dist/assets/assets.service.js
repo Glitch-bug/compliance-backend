@@ -32,7 +32,7 @@ let AssetsService = class AssetsService {
     async findAll(user, mda) {
         const universalRoles = [roles_enum_1.Role.MoF, roles_enum_1.Role.IAA, roles_enum_1.Role.Minister, roles_enum_1.Role.Admin];
         if (universalRoles.includes(user.role)) {
-            if (mda && mda !== 'National') {
+            if (mda && mda !== 'All MDAs') {
                 return this.assetsRepository.find({ where: { mda: mda } });
             }
             else {

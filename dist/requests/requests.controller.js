@@ -28,8 +28,8 @@ let RequestsController = class RequestsController {
     create(createRequestDto, user) {
         return this.requestsService.create(createRequestDto, user);
     }
-    findAll(user) {
-        return this.requestsService.findAll(user);
+    findAll(user, mda) {
+        return this.requestsService.findAll(user, mda);
     }
     findForReview() {
         return this.requestsService.findForReview();
@@ -52,8 +52,9 @@ __decorate([
 __decorate([
     (0, common_1.Get)(),
     __param(0, (0, user_decorator_1.GetUser)()),
+    __param(1, (0, common_1.Query)('mda')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [user_entity_1.User]),
+    __metadata("design:paramtypes", [user_entity_1.User, String]),
     __metadata("design:returntype", void 0)
 ], RequestsController.prototype, "findAll", null);
 __decorate([
@@ -67,7 +68,7 @@ __decorate([
 __decorate([
     (0, common_1.Patch)(':id'),
     (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
-    (0, common_1.SetMetadata)('roles', ['MoF Compliance', 'IAA Auditor', 'Minister']),
+    (0, common_1.SetMetadata)('roles', ['MoF Compliance', 'IAA Auditor', 'Minister', 'MDA']),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __param(2, (0, user_decorator_1.GetUser)()),

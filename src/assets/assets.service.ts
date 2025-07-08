@@ -26,7 +26,7 @@ export class AssetsService {
       const universalRoles: Role[] = [Role.MoF, Role.IAA, Role.Minister, Role.Admin];
 
     if (universalRoles.includes(user.role)) {
-      if (mda && mda !== 'National') {
+      if (mda && mda !== 'All MDAs') {
         return this.assetsRepository.find({ where: { mda: mda } });
       } else {
         return this.assetsRepository.find(); // Return all for 'National' or no filter

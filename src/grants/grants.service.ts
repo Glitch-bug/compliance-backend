@@ -27,8 +27,8 @@ export class GrantsService {
   async findAll(user: User, mda?: string): Promise<Grant[]> {
     const universalRoles: Role[] = [Role.MoF, Role.IAA, Role.Minister, Role.Admin];
     if (universalRoles.includes(user.role)) {
-      if (mda && mda !== 'National') {
-        return this.grantsRepository.find({ where: { mda } });
+      if (mda && mda !== 'All MDAs') {
+        return this.grantsRepository.find({ where: { mda: mda } });
       } else {
         return this.grantsRepository.find();
       }

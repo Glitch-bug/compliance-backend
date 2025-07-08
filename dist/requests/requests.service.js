@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const request_entity_1 = require("./request.entity");
+const roles_enum_1 = require("../users/roles.enum");
 let RequestsService = class RequestsService {
     constructor(requestsRepository) {
         this.requestsRepository = requestsRepository;
@@ -30,10 +31,15 @@ let RequestsService = class RequestsService {
         });
         return this.requestsRepository.save(request);
     }
-    async findAll(user) {
-        const universalRoles = ['MoF Compliance', 'IAA Auditor', 'Minister', 'System Admin'];
+    async findAll(user, mda) {
+        const universalRoles = [roles_enum_1.Role.MoF, roles_enum_1.Role.IAA, roles_enum_1.Role.Minister, roles_enum_1.Role.Admin];
         if (universalRoles.includes(user.role)) {
-            return this.requestsRepository.find();
+            if (mda && mda !== 'All MDAs') {
+                return this.requestsRepository.find({ where: [{ mda: mda }, { partnerMda: mda }] });
+            }
+            else {
+                return this.requestsRepository.find();
+            }
         }
         return this.requestsRepository.find({ where: [{ mda: user.mda }, { partnerMda: user.mda }] });
     }

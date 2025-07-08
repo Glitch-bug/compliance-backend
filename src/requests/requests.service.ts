@@ -28,8 +28,8 @@ export class RequestsService {
     // const universalRoles = ['MoF Compliance', 'IAA Auditor', 'Minister', 'System Admin'];
     const universalRoles: Role[] = [Role.MoF, Role.IAA, Role.Minister, Role.Admin];
     if (universalRoles.includes(user.role)) {
-      if (mda && mda !== 'National'){
-        return this.requestsRepository.find({ where: { mda: mda }});
+      if (mda && mda !== 'All MDAs'){
+        return this.requestsRepository.find({ where: [{ mda: mda }, {partnerMda: mda}] });
       }else {
         return this.requestsRepository.find();
       }

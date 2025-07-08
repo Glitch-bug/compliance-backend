@@ -6,7 +6,7 @@ export declare class ChecklistsController {
     private readonly checklistsService;
     constructor(checklistsService: ChecklistsService);
     createActive(createDto: CreateActiveChecklistDto, user: User): Promise<import("./active-checklist.entity").ActiveChecklist>;
-    findAllActive(user: User): Promise<import("./active-checklist.entity").ActiveChecklist[]>;
+    findAllActive(user: User, mda?: string): Promise<import("./active-checklist.entity").ActiveChecklist[]>;
     updateActive(id: string, updateDto: UpdateActiveChecklistDto): Promise<import("./active-checklist.entity").ActiveChecklist>;
     findAllTemplates(): Promise<import("./checklist-template.entity").ChecklistTemplate[]>;
 }

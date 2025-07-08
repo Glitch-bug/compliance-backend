@@ -33,7 +33,7 @@ export class RequestsController {
 
   @Patch(':id')
   @UseGuards(RolesGuard)
-  @SetMetadata('roles', ['MoF Compliance', 'IAA Auditor', 'Minister'])
+  @SetMetadata('roles', ['MoF Compliance', 'IAA Auditor', 'Minister', 'MDA'])
   update(@Param('id') id: string, @Body() updateRequestDto: UpdateRequestDto, @GetUser() user: User) {
     return this.requestsService.update(id, updateRequestDto, user);
   }

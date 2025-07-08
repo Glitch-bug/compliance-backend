@@ -18,6 +18,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const active_checklist_entity_1 = require("./active-checklist.entity");
 const checklist_template_entity_1 = require("./checklist-template.entity");
+const roles_enum_1 = require("../users/roles.enum");
 let ChecklistsService = class ChecklistsService {
     constructor(activeChecklistsRepository, checklistTemplatesRepository) {
         this.activeChecklistsRepository = activeChecklistsRepository;
@@ -38,10 +39,15 @@ let ChecklistsService = class ChecklistsService {
         });
         return this.activeChecklistsRepository.save(activeChecklist);
     }
-    async findAllActive(user) {
-        const universalRoles = ['MoF Compliance', 'IAA Auditor', 'Minister', 'System Admin'];
+    async findAllActive(user, mda) {
+        const universalRoles = [roles_enum_1.Role.MoF, roles_enum_1.Role.IAA, roles_enum_1.Role.Minister, roles_enum_1.Role.Admin];
         if (universalRoles.includes(user.role)) {
-            return this.activeChecklistsRepository.find();
+            if (mda && mda !== 'All MDAs') {
+                return this.activeChecklistsRepository.find({ where: { mda: mda } });
+            }
+            else {
+                return this.activeChecklistsRepository.find();
+            }
         }
         return this.activeChecklistsRepository.find({ where: { mda: user.mda } });
     }
