@@ -51,16 +51,16 @@ export class UsersRepository extends Repository<User> {
     const { username, password } = authCredentialsDto;
     const user = await this.findOne({ where: { username } });
     console.log(`user: ${user}`)
-    if(!user){
-      return null;
-    }else{
-      return user;
-    }
-
-    // if (user && await bcrypt.compare(password, user.passwordHash)) {
-    //   return user;
-    // } else {
+    // if(!user){
     //   return null;
+    // }else{
+    //   return user;
     // }
+
+    if (user && await bcrypt.compare(password, user.passwordHash)) {
+      return user;
+    } else {
+      return null;
+    }
   }
 }
