@@ -10,6 +10,7 @@ import { AssetsModule } from './assets/assets.module';
 import { ChecklistsModule } from './checklists/checklists.module';
 import { AdminModule } from './admin/admin.module';
 import { InsightsModule } from './insights/insights.module';
+import { BudgetsModule } from './bugdets/budgets.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { InsightsModule } from './insights/insights.module';
     ChecklistsModule,
     AdminModule,
     InsightsModule,
+    BudgetsModule,
   ],
 })
 export class AppModule {}
