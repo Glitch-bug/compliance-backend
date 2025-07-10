@@ -7,23 +7,50 @@ import { Budget } from './budget.entity';
 @Injectable()
 export class BudgetsService {
   constructor(
-    // Inject the standard TypeORM repository for the Budget entity
     @InjectRepository(Budget)
     private readonly budgetsRepository: Repository<Budget>,
   ) {}
 
   /**
-   * Creates multiple budget entries in the database.
-   * @param createBudgetDtos - An array of budget data transfer objects.
-   * @returns A promise that resolves to the array of created budget entities.
+   * Retrieves all budget entries for a specific MDA and fiscal year.
+   * @param mda - The name of the MDA.
+   * @param fiscalYear - The fiscal year.
    */
-  async createBudgets(createBudgetDtos: CreateBudgetDto[]): Promise<Budget[]> {
-    // Use the .create() method from the injected repository to prepare the entities
-    const budgets = this.budgetsRepository.create(createBudgetDtos);
-    
-    // Use the .save() method to insert the new entities into the database
-    await this.budgetsRepository.save(budgets);
-    
-    return budgets;
+  async getBudgetsByMda(mda: string, fiscalYear: number): Promise<Budget[]> {
+    return this.budgetsRepository.find({ where: { mda, fiscalYear } });
+  }
+
+  /**
+   * Creates new budget entries or updates existing ones based on the composite key
+   * (mda, fundingSource, budgetLine, fiscalYear).
+   * @param createBudgetDtos - An array of budget data.
+   */
+  async upsertBudgets(createBudgetDtos: CreateBudgetDto[]): Promise<Budget[]> {
+    const budgetsToSave: Budget[] = [];
+
+    for (const dto of createBudgetDtos) {
+      // Check if a budget entry already exists
+      let budget = await this.budgetsRepository.findOne({
+        where: {
+          mda: dto.mda,
+          fundingSource: dto.fundingSource,
+          budgetLine: dto.budgetLine,
+          fiscalYear: dto.fiscalYear,
+        },
+      });
+
+      if (budget) {
+        // If it exists, update the amount
+        budget.amount = dto.amount;
+        budgetsToSave.push(budget);
+      } else {
+        // If it doesn't exist, create a new entity instance
+        budget = this.budgetsRepository.create(dto);
+        budgetsToSave.push(budget);
+      }
+    }
+
+    // Use .save() which can handle both inserts and updates
+    return this.budgetsRepository.save(budgetsToSave);
   }
 }
