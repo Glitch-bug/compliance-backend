@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, Logger } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BudgetsController } from './budgets.controller';
 import { BudgetsService } from './budgets.service';
@@ -11,4 +11,11 @@ import { AuthModule } from '../auth/auth.module';
   controllers: [BudgetsController],
   providers: [BudgetsService, BudgetsRepository],
 })
-export class BudgetsModule {}
+
+export class BudgetsModule {
+  private readonly logger = new Logger(BudgetsModule.name); // Create a logger instance
+
+  constructor() {
+    this.logger.log('BudgetsModule has been initialized.'); // Add this log
+  }
+}
