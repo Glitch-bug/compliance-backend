@@ -5,7 +5,7 @@ import { Budget } from './budget.entity';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('budgets')
-@UseGuards(AuthGuard())
+// @UseGuards(AuthGuard())        
 export class BudgetsController {
   constructor(private budgetsService: BudgetsService) {}
 
