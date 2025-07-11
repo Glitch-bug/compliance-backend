@@ -1,21 +1,24 @@
-import { Module, Logger } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BudgetsController } from './budgets.controller';
 import { BudgetsService } from './budgets.service';
 import { Budget } from './budget.entity';
-import { BudgetsRepository } from './budgets.repository';
 import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Budget]), AuthModule],
+  imports: [
+    // This line is crucial. It makes the Budget entity and its repository
+    // available for injection within this module (e.g., in BudgetsService).
+    TypeOrmModule.forFeature([Budget]),
+    
+    // We import the AuthModule so that this module has access to Passport
+    // strategies, which is necessary for the @UseGuards(AuthGuard()) decorator.
+    AuthModule,
+  ],
+  // This declares the controller that belongs to this module.
   controllers: [BudgetsController],
-  providers: [BudgetsService, BudgetsRepository],
+  
+  // This declares the service that belongs to this module.
+  providers: [BudgetsService],
 })
-
-export class BudgetsModule {
-  private readonly logger = new Logger(BudgetsModule.name); // Create a logger instance
-
-  constructor() {
-    this.logger.log('BudgetsModule has been initialized.'); // Add this log
-  }
-}
+export class BudgetsModule {}
