@@ -31,7 +31,7 @@ export class BudgetsController {
     return this.budgetsService.upsertBudgets(createBudgetDtos);
   }
 
-  @Delete('/:mda/:fiscalYear')
+  @Delete('/mda/:mda/:fiscalYear')
   deleteBudgetsForMda(
     @Param('mda') mda: string,
     @Param('fiscalYear', ParseIntPipe) fiscalYear: number,
