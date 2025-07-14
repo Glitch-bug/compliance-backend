@@ -53,4 +53,10 @@ export class BudgetsService {
     // Use .save() which can handle both inserts and updates
     return this.budgetsRepository.save(budgetsToSave);
   }
+
+    async deleteBudgetsByMda(mda: string, fiscalYear: number): Promise<void> {
+    // This command finds all records matching the criteria and deletes them.
+    await this.budgetsRepository.delete({ mda, fiscalYear });
+  }
+
 }
