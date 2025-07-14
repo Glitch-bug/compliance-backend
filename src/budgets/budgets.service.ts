@@ -54,7 +54,7 @@ export class BudgetsService {
     return this.budgetsRepository.save(budgetsToSave);
   }
 
-    async deleteBudgetsByMda(mda: string, fiscalYear: number): Promise<void> {
+  async deleteBudgetsByMda(mda: string, fiscalYear: number): Promise<void> {
     // This command finds all records matching the criteria and deletes them.
     await this.budgetsRepository.delete({ mda, fiscalYear });
   }
