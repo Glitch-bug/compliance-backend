@@ -1,4 +1,4 @@
-import { Controller, Post, Body, ValidationPipe, UseGuards, Get, Param, ParseIntPipe, Logger } from '@nestjs/common';
+import { Controller, Post, Body, ValidationPipe, UseGuards, Get, Param, ParseIntPipe, Logger, Delete } from '@nestjs/common';
 import { BudgetsService } from './budgets.service';
 import { CreateBudgetDto } from './dto/create-budget.dto';
 import { Budget } from './budget.entity';
@@ -29,5 +29,13 @@ export class BudgetsController {
     @Body(ValidationPipe) createBudgetDtos: CreateBudgetDto[],
   ): Promise<Budget[]> {
     return this.budgetsService.upsertBudgets(createBudgetDtos);
+  }
+
+  @Delete('/:mda/:fiscalYear')
+  deleteBudgetsForMda(
+    @Param('mda') mda: string,
+    @Param('fiscalYear', ParseIntPipe) fiscalYear: number,
+  ): Promise<void> {
+    return this.budgetsService.deleteBudgetsByMda(mda, fiscalYear);
   }
 }
