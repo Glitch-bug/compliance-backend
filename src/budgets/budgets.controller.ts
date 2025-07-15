@@ -5,7 +5,8 @@ import { Budget } from './budget.entity';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('budgets')
-// @UseGuards(AuthGuard()) // Keep this commented out for now
+// @UseGuards(AuthGuard()) 
+// Keep this commented out for now
 export class BudgetsController {
   // Create a logger instance for this controller
   private readonly logger = new Logger(BudgetsController.name);
