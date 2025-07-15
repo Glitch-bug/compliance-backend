@@ -29,8 +29,10 @@ export class RequestsService {
     const universalRoles: Role[] = [Role.MoF, Role.IAA, Role.Minister, Role.Admin];
     if (universalRoles.includes(user.role)) {
       if (mda && mda !== 'All MDAs'){
+        console.log(`partial search: ${mda}, ${mda == 'All MDAs'}`)
         return this.requestsRepository.find({ where: [{ mda: mda }, {partnerMda: mda}] });
       }else {
+        console.log(`total search: ${mda}, ${mda == 'All MDAs'}`)
         return this.requestsRepository.find();
       }
 
