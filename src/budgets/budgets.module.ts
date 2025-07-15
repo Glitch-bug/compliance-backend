@@ -14,4 +14,8 @@ import { AuthModule } from '../auth/auth.module';
   controllers: [BudgetsController],
   providers: [BudgetsService],
 })
-export class BudgetsModule {}
+export class BudgetsModule {
+  constructor() {
+    console.log('🚀 BudgetsModule initialized');
+  }
+}
