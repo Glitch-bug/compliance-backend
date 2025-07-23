@@ -52,6 +52,15 @@ export class ChecklistsService {
     return this.activeChecklistsRepository.find({ where: { mda: user.mda } });
   }
 
+
+  async findAllActiveExternal(mda?: string): Promise<ActiveChecklist[]> {
+    if (mda && mda !== 'All MDAs') {
+      return this.activeChecklistsRepository.find({ where: { mda: mda } });
+    }
+    // If no specific MDA is requested, return all checklists.
+    return this.activeChecklistsRepository.find();
+  }
+
   async updateActiveChecklist(id: string, updateDto: UpdateActiveChecklistDto): Promise<ActiveChecklist> {
     const checklist = await this.activeChecklistsRepository.findOneBy({ id });
     if (!checklist) {
