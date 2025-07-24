@@ -2,6 +2,13 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { ChecklistTemplate } from './checklist-template.entity';
 
+
+export class ChecklistItem {
+  text: string;
+  completed: boolean;
+  lastUpdated: Date;
+}
+
 @Entity('active_checklists')
 export class ActiveChecklist {
   @PrimaryGeneratedColumn('uuid')
@@ -24,7 +31,7 @@ export class ActiveChecklist {
   status: string;
 
   @Column({ type: 'jsonb' })
-  items: { text: string; completed: boolean }[];
+  items: ChecklistItem[];
   
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

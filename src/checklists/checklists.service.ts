@@ -25,19 +25,28 @@ export class ChecklistsService {
       throw new NotFoundException(`Template with ID "${createDto.templateId}" not found`);
     }
 
-    const checklistItems = template.items.map(itemText => ({ text: itemText, completed: false }));
+    const creationDate = new Date();
+    // When creating a new checklist, initialize each item with a lastUpdated timestamp.
+    const checklistItems = template.items.map(itemText => ({
+      text: itemText,
+      completed: false,
+      lastUpdated: creationDate, // Default to the creation time of the checklist
+    }));
 
     const activeChecklist = this.activeChecklistsRepository.create({
       templateId: template.id,
-      name: `${template.name} - ${new Date().toLocaleDateString()}`,
+      name: `${template.name} - ${creationDate.toLocaleDateString()}`,
       mda: user.mda,
       status: 'In Progress',
       items: checklistItems,
+      createdAt: creationDate,
     });
 
     return this.activeChecklistsRepository.save(activeChecklist);
   }
-  
+
+
+
   async findAllActive(user: User, mda?: string): Promise<ActiveChecklist[]> {
     const universalRoles: Role[] = [Role.MoF, Role.IAA, Role.Minister, Role.Admin];
 
@@ -67,7 +76,22 @@ export class ChecklistsService {
       throw new NotFoundException(`Checklist with ID "${id}" not found`);
     }
 
-    checklist.items = updateDto.items;
+    const now = new Date();
+    // Compare the incoming items with the existing ones to see what changed.
+    const updatedItems = checklist.items.map((existingItem, index) => {
+      const incomingItem = updateDto.items[index];
+      // If the completion status has changed, update the lastUpdated timestamp.
+      if (existingItem.completed !== incomingItem.completed) {
+        return {
+          ...incomingItem,
+          lastUpdated: now,
+        };
+      }
+      // Otherwise, keep the existing item data, including its original lastUpdated timestamp.
+      return existingItem;
+    });
+
+    checklist.items = updatedItems;
     
     const isCompleted = checklist.items.every(item => item.completed);
     checklist.status = isCompleted ? 'Completed' : 'In Progress';
