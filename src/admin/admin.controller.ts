@@ -6,11 +6,12 @@ import { AdminService } from './admin.service';
 import { ApiKeyGuard } from '../auth/guards/api-key.guard';
 
 @Controller('admin')
-@UseGuards(AuthGuard(), RolesGuard)
+
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
   @Get('/system-config')
+  @UseGuards(AuthGuard(), RolesGuard)
   @SetMetadata('roles', ['MDA', 'MoF Compliance', 'IAA Auditor', 'Minister', 'System Admin'])
   getSystemConfig() {
     return this.adminService.getSystemConfig();
