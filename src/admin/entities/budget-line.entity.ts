@@ -17,6 +17,10 @@ export class BudgetLine {
   @Column({ type: 'decimal', precision: 12, scale: 2, default: 0.00, comment: 'The allocated amount for this line item' })
   amount: number;
 
+  @Column()
+  mda: string;
+
+
   /*
   // Example of a Many-to-One relationship with FundingSource.
   // Don't forget to add a corresponding One-to-Many on the FundingSource entity.

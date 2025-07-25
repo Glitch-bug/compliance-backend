@@ -1,8 +1,9 @@
 // src/admin/admin.controller.ts
-import { Controller, Get, UseGuards, SetMetadata } from '@nestjs/common';
+import { Controller, Get, UseGuards, SetMetadata, Query} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { AdminService } from './admin.service';
+import { ApiKeyGuard } from '../auth/guards/api-key.guard';
 
 @Controller('admin')
 @UseGuards(AuthGuard(), RolesGuard)
@@ -14,7 +15,12 @@ export class AdminController {
   getSystemConfig() {
     return this.adminService.getSystemConfig();
   }
-  
+
+  @Get('/budget-lines')
+  @UseGuards(ApiKeyGuard)
+  getBudgetLines(@Query('mda') mda?: string) {
+    return this.adminService.getBudgetLines();
+  }
   // Add POST, PATCH, DELETE endpoints here for managing config items
   // and protect them with the 'System Admin' role.
 }
