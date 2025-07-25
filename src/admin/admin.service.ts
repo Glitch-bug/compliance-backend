@@ -12,7 +12,7 @@ export class AdminService {
     @InjectRepository(FundingSource) private fundingSourceRepo: Repository<FundingSource>,
     @InjectRepository(BudgetLine) private budgetLineRepo: Repository<BudgetLine>,
     @InjectRepository(RiskFactor) private riskFactorRepo: Repository<RiskFactor>,
-  ) {}
+  ) { }
 
   // This service can be expanded to include create, update, delete for these entities
   async getSystemConfig() {
@@ -20,5 +20,14 @@ export class AdminService {
     const budgetLines = await this.budgetLineRepo.find();
     const riskFactors = await this.riskFactorRepo.find();
     return { fundingSources, budgetLines, riskFactors };
+  }
+
+
+  async getBudgetLines(mda?: string) {
+    if (mda && mda !== 'All MDAs') {
+      return this.budgetLineRepo.find({ where: { mda: mda } });
+    } else {
+      return this.budgetLineRepo.find();
+    }
   }
 }
