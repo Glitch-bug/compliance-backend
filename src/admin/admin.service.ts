@@ -5,6 +5,9 @@ import { Repository } from 'typeorm';
 import { FundingSource } from './entities/funding-source.entity';
 import { BudgetLine } from './entities/budget-line.entity';
 import { RiskFactor } from './entities/risk-factor.entity';
+import { CreateBudgetLineDto } from './dto/create-budget-line.dto';
+import { CreateRiskFactorDto } from './dto/create-risk-factor.dto';
+import { CreateFundingSourceDto } from './dto/create-funding-source.dto';
 
 @Injectable()
 export class AdminService {
@@ -29,5 +32,20 @@ export class AdminService {
     } else {
       return this.budgetLineRepo.find();
     }
+  }
+
+  async createBudgetLine(createBudgetLineDto: CreateBudgetLineDto): Promise<BudgetLine> {
+    const newBudgetLine = this.budgetLineRepo.create(createBudgetLineDto);
+    return this.budgetLineRepo.save(newBudgetLine);
+  }
+
+  async createRiskFactor(createRiskFactorDto: CreateRiskFactorDto): Promise<RiskFactor> {
+    const newRiskFactor = this.budgetLineRepo.create(createRiskFactorDto);
+    return this.riskFactorRepo.save(newRiskFactor);
+  }
+
+  async createFundingSource(createFundingSourceDto: CreateFundingSourceDto): Promise<FundingSource> {
+    const newFundingSource = this.fundingSourceRepo.create(createFundingSourceDto);
+    return this.fundingSourceRepo.save(newFundingSource);
   }
 }
