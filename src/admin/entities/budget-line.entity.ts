@@ -17,10 +17,14 @@ export class BudgetLine {
   @Column({ type: 'decimal', precision: 12, scale: 2, default: 0.00, comment: 'The allocated amount for this line item' })
   amount: number;
 
-  @Column()
+
+  @Column({
+    type: 'varchar',
+    length: 255,
+    default: 'Bosomtwe District Assembly',
+    comment: 'The Ministry, Department, or Agency this budget line belongs to'
+  })
   mda: string;
-
-
   /*
   // Example of a Many-to-One relationship with FundingSource.
   // Don't forget to add a corresponding One-to-Many on the FundingSource entity.
