@@ -6,6 +6,8 @@ import { AdminService } from './admin.service';
 import { ApiKeyGuard } from '../auth/guards/api-key.guard';
 import { CreateBudgetLineDto } from './dto/create-budget-line.dto';
 import { UpdateAmountDto } from './dto/update-amount.dto';
+import { CreateRiskFactorDto } from './dto/create-risk-factor.dto';
+import { CreateFundingSourceDto } from './dto/create-funding-source.dto';
 
 @Controller('admin')
 
@@ -31,6 +33,21 @@ export class AdminController {
   createBudgetLine(@Body(ValidationPipe) createBudgetLineDto: CreateBudgetLineDto) {
     return this.adminService.createBudgetLine(createBudgetLineDto);
   }
+
+  @Post('/risk-factor')
+  @UseGuards(AuthGuard(), RolesGuard)
+  @SetMetadata('roles', ['System Admin'])
+  createRiskFactor(@Body(ValidationPipe) createRiskFactorDto: CreateRiskFactorDto) {
+    return this.adminService.createRiskFactor(createRiskFactorDto);
+  }
+
+  @Post('/funding-source')
+  @UseGuards(AuthGuard(), RolesGuard)
+  @SetMetadata('roles', ['System Admin'])
+  createFundingSource(@Body(ValidationPipe) createFundingSourceDto: CreateFundingSourceDto) {
+    return this.adminService.createFundingSource(createFundingSourceDto);
+  }
+
 
   /**
    * Updates the amount of a specific Budget Line by adding to its current value.

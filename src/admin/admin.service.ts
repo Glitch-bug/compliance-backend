@@ -49,7 +49,7 @@ export class AdminService {
     return this.fundingSourceRepo.save(newFundingSource);
   }
 
-    async incrementBudgetLineAmount(id: string, amountToAdd: number): Promise<BudgetLine> {
+  async incrementBudgetLineAmount(id: string, amountToAdd: number): Promise<BudgetLine> {
     const budgetLine = await this.budgetLineRepo.findOneBy({ id });
     if (!budgetLine) {
       throw new NotFoundException(`BudgetLine with ID "${id}" not found`);
