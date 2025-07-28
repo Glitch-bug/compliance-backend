@@ -3,9 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateBudgetDto } from './dto/create-budget.dto';
 import { Budget } from './budget.entity';
+import { IncrementBudgetDto } from './dto/increment-budget.dto';
 
 @Injectable()
 export class BudgetsService {
+  fundingSourceRepository: any;
+  budgetLineRepository: any;
   constructor(
     @InjectRepository(Budget)
     private readonly budgetsRepository: Repository<Budget>,
@@ -57,6 +60,62 @@ export class BudgetsService {
   async deleteBudgetsByMda(mda: string, fiscalYear: number): Promise<void> {
     // This command finds all records matching the criteria and deletes them.
     await this.budgetsRepository.delete({ mda, fiscalYear });
+  }
+
+  // async incrementBudget(incrementDto: IncrementBudgetDto): Promise<Budget> {
+  //   const { mda, fundingSource, budgetLine, fiscalYear, amount } = incrementDto;
+
+  //   let budget = await this.budgetsRepository.findOne({
+  //     where: { mda, fundingSource, budgetLine, fiscalYear },
+  //   });
+
+  //   if (budget) {
+  //     // If it exists, add the new amount to the existing amount.
+  //     budget.amount = Number(budget.amount) + amount;
+  //   } else {
+  //     // If it doesn't exist, create a new record with the specified amount.
+  //     budget = this.budgetsRepository.create({
+  //       mda,
+  //       fundingSource,
+  //       budgetLine,
+  //       fiscalYear,
+  //       amount,
+  //     });
+  //   }
+
+  //   return this.budgetsRepository.save(budget);
+  // }
+
+
+  async incrementBudget(incrementDto: IncrementBudgetDto): Promise<Budget> {
+    const { mda, fundingSource, budgetLine, fiscalYear, amount } = incrementDto;
+
+    let fsEntity = await this.fundingSourceRepository.findOne({ where: { name: fundingSource } });
+    if (!fsEntity) {
+      fsEntity = this.fundingSourceRepository.create({ name: fundingSource, amount: amount });
+      await this.fundingSourceRepository.save(fsEntity);
+    }
+
+
+    let budget = await this.budgetsRepository.findOne({
+      where: { mda, fundingSource, budgetLine, fiscalYear },
+    });
+
+    if (budget) {
+      // If it exists, add the new amount to the existing amount.
+      budget.amount = Number(budget.amount) + amount;
+    } else {
+      // If it doesn't exist, create a new record with the specified amount.
+      budget = this.budgetsRepository.create({
+        mda,
+        fundingSource,
+        budgetLine,
+        fiscalYear,
+        amount,
+      });
+    }
+
+    return this.budgetsRepository.save(budget);
   }
 
 }

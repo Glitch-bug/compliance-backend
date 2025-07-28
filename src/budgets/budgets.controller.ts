@@ -1,8 +1,10 @@
-import { Controller, Post, Body, ValidationPipe, UseGuards, Get, Param, ParseIntPipe, Logger, Delete } from '@nestjs/common';
+import { Controller, Post, Body, ValidationPipe, UseGuards, Get, Param, ParseIntPipe, Logger, Delete, Patch } from '@nestjs/common';
 import { BudgetsService } from './budgets.service';
 import { CreateBudgetDto } from './dto/create-budget.dto';
 import { Budget } from './budget.entity';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiKeyGuard } from 'src/auth/guards/api-key.guard';
+import { IncrementBudgetDto } from './dto/increment-budget.dto';
 
 @Controller('budgets')
 @UseGuards(AuthGuard()) 
@@ -38,5 +40,13 @@ export class BudgetsController {
     @Param('fiscalYear', ParseIntPipe) fiscalYear: number,
   ): Promise<void> {
     return this.budgetsService.deleteBudgetsByMda(mda, fiscalYear);
+  }
+
+  @Patch('/increment')
+  @UseGuards(ApiKeyGuard)
+  incrementBudget(
+    @Body(ValidationPipe) incrementBudgetDto: IncrementBudgetDto,
+  ): Promise<Budget> {
+    return this.budgetsService.incrementBudget(incrementBudgetDto);
   }
 }

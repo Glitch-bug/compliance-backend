@@ -1,10 +1,11 @@
 // src/admin/admin.controller.ts
-import { Controller, Get, UseGuards, SetMetadata, Query, Post, Body, ValidationPipe} from '@nestjs/common';
+import { Controller, Get, UseGuards, SetMetadata, Query, Post, Body, ValidationPipe, Patch, Param} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { AdminService } from './admin.service';
 import { ApiKeyGuard } from '../auth/guards/api-key.guard';
 import { CreateBudgetLineDto } from './dto/create-budget-line.dto';
+import { UpdateAmountDto } from './dto/update-amount.dto';
 
 @Controller('admin')
 
@@ -30,6 +31,20 @@ export class AdminController {
   createBudgetLine(@Body(ValidationPipe) createBudgetLineDto: CreateBudgetLineDto) {
     return this.adminService.createBudgetLine(createBudgetLineDto);
   }
+
+  /**
+   * Updates the amount of a specific Budget Line by adding to its current value.
+   * Now protected by ApiKeyGuard for M2M communication.
+   */
+  @Patch('/budget-lines/:id/increment')
+  @UseGuards(ApiKeyGuard)
+  incrementBudgetLineAmount(
+    @Param('id') id: string,
+    @Body(ValidationPipe) updateAmountDto: UpdateAmountDto,
+  ) {
+    return this.adminService.incrementBudgetLineAmount(id, updateAmountDto.amount);
+  }
+
 
 
   @Post('/budget-lines/external')

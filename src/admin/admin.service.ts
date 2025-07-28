@@ -1,5 +1,5 @@
 // src/admin/admin.service.ts
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { FundingSource } from './entities/funding-source.entity';
@@ -48,4 +48,15 @@ export class AdminService {
     const newFundingSource = this.fundingSourceRepo.create(createFundingSourceDto);
     return this.fundingSourceRepo.save(newFundingSource);
   }
+
+    async incrementBudgetLineAmount(id: string, amountToAdd: number): Promise<BudgetLine> {
+    const budgetLine = await this.budgetLineRepo.findOneBy({ id });
+    if (!budgetLine) {
+      throw new NotFoundException(`BudgetLine with ID "${id}" not found`);
+    }
+    // TypeORM automatically handles converting string from DB to number
+    budgetLine.amount = Number(budgetLine.amount) + amountToAdd;
+    return this.budgetLineRepo.save(budgetLine);
+  }
+
 }
