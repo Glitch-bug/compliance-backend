@@ -8,5 +8,5 @@ export class CreateFundingSourceDto {
 
   @IsString()
   @IsOptional()
-  // description?: string;
+  description?: string;
 }
