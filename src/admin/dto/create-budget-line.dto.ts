@@ -10,16 +10,16 @@ export class CreateBudgetLineDto {
   id?: string;
 
   @IsString()
-  @IsNotEmpty()
-  name: string;
+  @IsOptional()
+  name?: string;
 
   @IsString()
   @IsOptional()
   description?: string;
 
   @IsString()
-  @IsNotEmpty()
-  mda: string;
+  @IsOptional()
+  mda?: string;
 
   @ValidateIf((o) => o.amount !== null && o.amount !== undefined)
   @IsNumber()
