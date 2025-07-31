@@ -23,5 +23,5 @@ export class CreateBudgetLineDto {
 
   @IsNumber()
   @IsPositive()
-  amount: number;
+  amount?: number;
 }
