@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsOptional, IsUUID, IsNumber, IsPositive } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsUUID, IsNumber, IsPositive, ValidateIf } from 'class-validator';
 
 /**
  * Defines the data structure for creating or updating a Budget Line.
@@ -21,6 +21,7 @@ export class CreateBudgetLineDto {
   @IsNotEmpty()
   mda: string;
 
+  @ValidateIf((o) => o.amount !== null && o.amount !== undefined)
   @IsNumber()
   @IsPositive()
   amount?: number;
