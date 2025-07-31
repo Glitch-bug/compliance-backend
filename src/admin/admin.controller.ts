@@ -24,7 +24,7 @@ export class AdminController {
   @Get('/budget-lines')
   @UseGuards(ApiKeyGuard)
   getBudgetLines(@Query('mda') mda?: string) {
-    return this.adminService.getBudgetLines();
+    return this.adminService.getBudgetLines(mda);
   }
 
   @Post('/budget-lines')
