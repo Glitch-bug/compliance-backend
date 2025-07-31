@@ -67,7 +67,12 @@ export class AdminController {
   @Post('/budget-lines/external')
   @UseGuards(ApiKeyGuard)
   createBudgetLineExternal(@Body(ValidationPipe) createBudgetLineDto: CreateBudgetLineDto) {
-    return this.adminService.createBudgetLine(createBudgetLineDto);
+    if (createBudgetLineDto.id == null){
+      return this.adminService.createBudgetLine(createBudgetLineDto);
+    } else {
+      return this.adminService.incrementBudgetLineAmountWithCreateDto(createBudgetLineDto);
+    }
+
   }
   // Add POST, PATCH, DELETE endpoints here for managing config items
   // and protect them with the 'System Admin' role.

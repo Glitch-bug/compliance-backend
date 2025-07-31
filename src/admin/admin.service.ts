@@ -27,7 +27,9 @@ export class AdminService {
 
 
   async getBudgetLines(mda?: string) {
-    if (mda && mda !== 'All MDAs') {
+    console.log(`The Mda ${mda}`)
+    console.log(`Is all mda match ${(mda !== 'All MDAs')}`)
+    if (mda && (mda !== 'All MDAs')) {
       return this.budgetLineRepo.find({ where: { mda: mda } });
     } else {
       return this.budgetLineRepo.find();
@@ -56,6 +58,18 @@ export class AdminService {
     }
     // TypeORM automatically handles converting string from DB to number
     budgetLine.amount = Number(budgetLine.amount) + amountToAdd;
+    return this.budgetLineRepo.save(budgetLine);
+  }
+
+
+  async incrementBudgetLineAmountWithCreateDto(createBudgetLineDto: CreateBudgetLineDto): Promise<BudgetLine> {
+    const budgetLine = await this.budgetLineRepo.findOneBy({id: createBudgetLineDto.id });
+
+    if (!budgetLine) {
+      throw new NotFoundException(`BudgetLine with ID "${createBudgetLineDto.id}" not found`);
+    }
+    // TypeORM automatically handles converting string from DB to number
+    budgetLine.amount = Number(budgetLine.amount) +  createBudgetLineDto.amount;
     return this.budgetLineRepo.save(budgetLine);
   }
 
