@@ -26,7 +26,7 @@ export class AdminService {
   }
 
 
-  async getBudgetLines(mda?: string) {
+  async getBudgetLine(mda: string) {
     console.log(`The Mda ${mda}`)
     console.log(`Is all mda match ${(mda !== 'All MDAs')}`)
     if (mda && (mda !== 'All MDAs')) {
