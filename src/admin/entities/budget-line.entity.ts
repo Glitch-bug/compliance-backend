@@ -22,6 +22,7 @@ export class BudgetLine {
     type: 'varchar',
     length: 255,
     default: 'Bosomtwe District Assembly',
+    nullable: true,
     comment: 'The Ministry, Department, or Agency this budget line belongs to'
   })
   mda: string;

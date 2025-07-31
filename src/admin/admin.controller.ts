@@ -1,5 +1,5 @@
 // src/admin/admin.controller.ts
-import { Controller, Get, UseGuards, SetMetadata, Query, Post, Body, ValidationPipe, Patch, Param} from '@nestjs/common';
+import { Controller, Get, UseGuards, SetMetadata, Query, Post, Body, ValidationPipe, Patch, Param } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { AdminService } from './admin.service';
@@ -12,7 +12,7 @@ import { CreateFundingSourceDto } from './dto/create-funding-source.dto';
 @Controller('admin')
 
 export class AdminController {
-  constructor(private readonly adminService: AdminService) {}
+  constructor(private readonly adminService: AdminService) { }
 
   @Get('/system-config')
   @UseGuards(AuthGuard(), RolesGuard)
@@ -67,9 +67,12 @@ export class AdminController {
   @Post('/budget-lines/external')
   @UseGuards(ApiKeyGuard)
   createBudgetLineExternal(@Body(ValidationPipe) createBudgetLineDto: CreateBudgetLineDto) {
-    if (createBudgetLineDto.id == null){
+    console.log(`create? ${createBudgetLineDto.id}`);
+    if (createBudgetLineDto.id == null) {
+      console.log(`created`);
       return this.adminService.createBudgetLine(createBudgetLineDto);
     } else {
+      console.log(`updated`);
       return this.adminService.incrementBudgetLineAmountWithCreateDto(createBudgetLineDto);
     }
 
