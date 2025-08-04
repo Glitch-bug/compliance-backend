@@ -73,4 +73,29 @@ export class AdminService {
     return this.budgetLineRepo.save(budgetLine);
   }
 
+
+    // --- New Delete Methods ---
+
+  async deleteFundingSource(id: string): Promise<void> {
+    const result = await this.fundingSourceRepo.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`FundingSource with ID "${id}" not found`);
+    }
+  }
+
+  async deleteBudgetLine(id: string): Promise<void> {
+    const result = await this.budgetLineRepo.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`BudgetLine with ID "${id}" not found`);
+    }
+  }
+
+  async deleteRiskFactor(id: string): Promise<void> {
+    const result = await this.riskFactorRepo.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`RiskFactor with ID "${id}" not found`);
+    }
+  }
+
+
 }

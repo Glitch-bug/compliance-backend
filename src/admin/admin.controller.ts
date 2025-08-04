@@ -1,5 +1,5 @@
 // src/admin/admin.controller.ts
-import { Controller, Get, UseGuards, SetMetadata, Query, Post, Body, ValidationPipe, Patch, Param } from '@nestjs/common';
+import { Controller, Get, UseGuards, SetMetadata, Query, Post, Body, ValidationPipe, Patch, Param, Delete, HttpStatus, HttpCode } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { AdminService } from './admin.service';
@@ -79,4 +79,28 @@ export class AdminController {
   }
   // Add POST, PATCH, DELETE endpoints here for managing config items
   // and protect them with the 'System Admin' role.
+
+
+  // --- Delete Endpoints ---
+
+  @Delete('/funding-sources/:id')
+  @SetMetadata('roles', ['System Admin'])
+  @HttpCode(HttpStatus.NO_CONTENT)
+  deleteFundingSource(@Param('id') id: string): Promise<void> {
+    return this.adminService.deleteFundingSource(id);
+  }
+
+  @Delete('/budget-lines/:id')
+  @SetMetadata('roles', ['System Admin'])
+  @HttpCode(HttpStatus.NO_CONTENT)
+  deleteBudgetLine(@Param('id') id: string): Promise<void> {
+    return this.adminService.deleteBudgetLine(id);
+  }
+
+  @Delete('/risk-factors/:id')
+  @SetMetadata('roles', ['System Admin'])
+  @HttpCode(HttpStatus.NO_CONTENT)
+  deleteRiskFactor(@Param('id') id: string): Promise<void> {
+    return this.adminService.deleteRiskFactor(id);
+  }
 }
