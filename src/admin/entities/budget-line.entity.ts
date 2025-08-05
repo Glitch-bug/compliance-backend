@@ -20,7 +20,7 @@ export class BudgetLine {
 
   @Column({
     type: 'varchar',
-    length: 255,
+    length: 256,
     default: 'Bosomtwe District Assembly',
     nullable: true,
     comment: 'The Ministry, Department, or Agency this budget line belongs to'
