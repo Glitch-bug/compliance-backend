@@ -36,9 +36,13 @@ export class AdminService {
     }
   }
 
-  async createBudgetLine(createBudgetLineDto: CreateBudgetLineDto): Promise<BudgetLine> {
+  async createBudgetLine(createBudgetLineDto: CreateBudgetLineDto): Promise<{ status: string; message: string; data: BudgetLine }> {
     const newBudgetLine = this.budgetLineRepo.create(createBudgetLineDto);
-    return this.budgetLineRepo.save(newBudgetLine);
+        return {
+        status: "success",
+        message: `Successfully created new budget line "${newBudgetLine.name}".`,
+        data: newBudgetLine
+    };
   }
 
   async createRiskFactor(createRiskFactorDto: CreateRiskFactorDto): Promise<RiskFactor> {
@@ -51,18 +55,23 @@ export class AdminService {
     return this.fundingSourceRepo.save(newFundingSource);
   }
 
-  async incrementBudgetLineAmount(id: string, amountToAdd: number): Promise<BudgetLine> {
+  async incrementBudgetLineAmount(id: string, amountToAdd: number): Promise<{ status: string; message: string; data: BudgetLine }> {
     const budgetLine = await this.budgetLineRepo.findOneBy({ id });
     if (!budgetLine) {
       throw new NotFoundException(`BudgetLine with ID "${id}" not found`);
     }
     // TypeORM automatically handles converting string from DB to number
     budgetLine.amount = Number(budgetLine.amount) + amountToAdd;
-    return this.budgetLineRepo.save(budgetLine);
+    const updatedBudgetLine = await this.budgetLineRepo.save(budgetLine);
+    return {
+        status: "success",
+        message: `Successfully incremented budget line "${updatedBudgetLine.name}" by ${amountToAdd}.`,
+        data: updatedBudgetLine
+    };
   }
 
 
-  async incrementBudgetLineAmountWithCreateDto(createBudgetLineDto: CreateBudgetLineDto): Promise<BudgetLine> {
+  async incrementBudgetLineAmountWithCreateDto(createBudgetLineDto: CreateBudgetLineDto): Promise<{ status: string; message: string; data: BudgetLine }>  {
     const budgetLine = await this.budgetLineRepo.findOneBy({id: createBudgetLineDto.id });
 
     if (!budgetLine) {
@@ -70,7 +79,12 @@ export class AdminService {
     }
     // TypeORM automatically handles converting string from DB to number
     budgetLine.amount = Number(budgetLine.amount) +  createBudgetLineDto.amount;
-    return this.budgetLineRepo.save(budgetLine);
+        const updatedBudgetLine = await this.budgetLineRepo.save(budgetLine);
+    return {
+        status: "success",
+        message: `Successfully incremented budget line "${updatedBudgetLine.name}" by ${createBudgetLineDto.amount}.`,
+        data: updatedBudgetLine
+    };
   }
 
 

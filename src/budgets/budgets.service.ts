@@ -87,7 +87,7 @@ export class BudgetsService {
   // }
 
 
-  async incrementBudget(incrementDto: IncrementBudgetDto): Promise<Budget> {
+  async incrementBudget(incrementDto: IncrementBudgetDto): Promise<{status:string; message: string; data: Budget}> {
     const { mda, fundingSource, budgetLine, fiscalYear, amount } = incrementDto;
 
     let fsEntity = await this.fundingSourceRepository.findOne({ where: { name: fundingSource } });
@@ -115,7 +115,11 @@ export class BudgetsService {
       });
     }
 
-    return this.budgetsRepository.save(budget);
+    return {
+      status:"success",
+      message: "Successfully updated budget",
+      data: budget
+    }
   }
 
 }
