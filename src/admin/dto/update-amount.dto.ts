@@ -1,11 +1,9 @@
 // src/admin/dto/update-amount.dto.ts
-import { IsNumber, IsPositive } from 'class-validator';
+import { IsNumber, IsPositive, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
 
-/**
- * DTO for requests that update a numerical amount.
- * Ensures the amount is a positive number.
- */
 export class UpdateAmountDto {
+  @Type(() => Number) // Transform incoming value to number
   @IsNumber()
   @IsPositive()
   amount: number;
