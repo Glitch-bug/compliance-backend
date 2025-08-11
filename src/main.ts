@@ -12,7 +12,7 @@ async function bootstrap() {
     credentials: true,
   });
   //red
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true,  transformOptions: { enableImplicitConversion: true }, }));
 
   await app.listen(3001);
   console.log(`Application is running on: ${await app.getUrl()}`);
