@@ -16,7 +16,7 @@ export class ChecklistsService {
     private activeChecklistsRepository: Repository<ActiveChecklist>,
     @InjectRepository(ChecklistTemplate)
     private checklistTemplatesRepository: Repository<ChecklistTemplate>,
-  ) {}
+  ) { }
 
   // --- Active Checklists ---
   async createActiveChecklist(createDto: CreateActiveChecklistDto, user: User): Promise<ActiveChecklist> {
@@ -53,7 +53,7 @@ export class ChecklistsService {
     if (universalRoles.includes(user.role)) {
       if (mda && mda !== 'All MDAs') {
         return this.activeChecklistsRepository.find({ where: { mda: mda } });
-      }else {
+      } else {
         return this.activeChecklistsRepository.find();
       }
 
@@ -62,12 +62,14 @@ export class ChecklistsService {
   }
 
 
-  async findAllActiveExternal(mda?: string): Promise<ActiveChecklist[]> {
+  async findAllActiveExternal(mda?: string): Promise<{ status: string; message: string; data: ActiveChecklist[]; }> {
     if (mda && mda !== 'All MDAs') {
-      return this.activeChecklistsRepository.find({ where: { mda: mda } });
+      const checklists = await this.activeChecklistsRepository.find({ where: { mda: mda } });
+      return { status: "success", message: "Active checklists", data: checklists };
     }
     // If no specific MDA is requested, return all checklists.
-    return this.activeChecklistsRepository.find();
+    const checklists = await this.activeChecklistsRepository.find();
+    return { status: "success", message: "Active checklists", data: checklists };
   }
 
   async updateActiveChecklist(id: string, updateDto: UpdateActiveChecklistDto): Promise<ActiveChecklist> {
@@ -92,7 +94,7 @@ export class ChecklistsService {
     });
 
     checklist.items = updatedItems;
-    
+
     const isCompleted = checklist.items.every(item => item.completed);
     checklist.status = isCompleted ? 'Completed' : 'In Progress';
 

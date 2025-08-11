@@ -46,7 +46,7 @@ export class BudgetsController {
   @UseGuards(ApiKeyGuard)
   incrementBudget(
     @Body(ValidationPipe) incrementBudgetDto: IncrementBudgetDto,
-  ): Promise<Budget> {
+  ): Promise<{status:string; message: string; data:Budget}>  {
     return this.budgetsService.incrementBudget(incrementBudgetDto);
   }
 }
