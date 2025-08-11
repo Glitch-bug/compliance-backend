@@ -35,7 +35,7 @@ export class ChecklistsService {
 
     const activeChecklist = this.activeChecklistsRepository.create({
       templateId: template.id,
-      name: `${template.name} - ${creationDate.toLocaleDateString()}`,
+      name: `${createDto.name} - ${creationDate.toLocaleDateString()}`,
       mda: user.mda,
       status: 'In Progress',
       items: checklistItems,
