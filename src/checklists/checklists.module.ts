@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ChecklistsController } from './checklists.controller';
 import { ChecklistsService } from './checklists.service';
-import { ActiveChecklist } from './active-checklist.entity';
+import { ActiveChecklist } from './entity/active-checklist.entity';
 import { ChecklistTemplate } from './checklist-template.entity';
 import { AuthModule } from '../auth/auth.module';
 
