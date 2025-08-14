@@ -10,4 +10,8 @@ export class CreateActiveChecklistDto {
   @IsString()
   @IsNotEmpty()
   name: string; // The new custom title for the checklist
+
+  @IsUUID()
+  @IsNotEmpty()
+  budgetLineId: string;  
 }

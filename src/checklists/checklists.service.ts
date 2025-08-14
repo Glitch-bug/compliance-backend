@@ -2,7 +2,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ActiveChecklist } from './active-checklist.entity';
+import { ActiveChecklist } from './entity/active-checklist.entity';
 import { ChecklistTemplate } from './checklist-template.entity';
 import { CreateActiveChecklistDto } from './dto/create-active-checklist.dto';
 import { UpdateActiveChecklistDto } from './dto/update-active-checklist.dto';
@@ -40,6 +40,7 @@ export class ChecklistsService {
       status: 'In Progress',
       items: checklistItems,
       createdAt: creationDate,
+      budgetLine: { id: createDto.budgetLineId }
     });
 
     return this.activeChecklistsRepository.save(activeChecklist);

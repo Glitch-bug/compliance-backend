@@ -1,18 +1,24 @@
 // src/checklists/dto/update-active-checklist.dto.ts
-import { IsArray, IsString, IsBoolean, IsDate, IsOptional, ValidateNested } from 'class-validator';
+import { IsArray, IsString, IsBoolean, IsDate, IsOptional, ValidateNested, IsNumber, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 
 class ChecklistItemDto {
-    @IsString()
-    text: string;
+  @IsString()
+  text: string;
 
-    @IsBoolean()
-    completed: boolean;
+  @IsBoolean()
+  completed: boolean;
 
-    @IsDate()
-    @IsOptional() // This can be optional from the client, as the service will manage it
-    @Type(() => Date)
-    lastUpdated?: Date;
+  @IsDate()
+  @IsOptional()
+  @Type(() => Date)
+  lastUpdated?: Date;
+
+  @IsNumber({ maxDecimalPlaces: 2 }) // up to 2 decimal places for currency
+  @Min(0) // zero and above allowed
+  @IsOptional()
+  @Type(() => Number)
+  amount?: number;
 }
 
 export class UpdateActiveChecklistDto {

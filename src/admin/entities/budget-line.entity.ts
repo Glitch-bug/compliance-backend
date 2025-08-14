@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { ActiveChecklist } from 'src/checklists/entity/active-checklist.entity';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 // To enable relationships, you might import other entities like this:
 // import { FundingSource } from './funding-source.entity';
 // import { ManyToOne } from 'typeorm';
@@ -38,4 +39,8 @@ export class BudgetLine {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  // Inverse side of the relation
+  @OneToMany(() => ActiveChecklist, (activeChecklist) => activeChecklist.budgetLine)
+  active_checklists: ActiveChecklist[];
 }
