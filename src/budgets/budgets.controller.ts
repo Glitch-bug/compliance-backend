@@ -61,7 +61,7 @@ export class BudgetsController {
   consolidatedIncrement(
     @Body(ValidationPipe) consolidatedIncrementDto: ConsolidatedIncrementDto,
   ): Promise<{ status: string; message: string; data: Budget }> {
-    return this.budgetsService.consolidatedIncrement(consolidatedIncrementDto);
+    return this.budgetsService.consolidatedIncrementFunc(consolidatedIncrementDto);
   }
 
 }
