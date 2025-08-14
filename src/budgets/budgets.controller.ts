@@ -5,6 +5,7 @@ import { Budget } from './budget.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiKeyGuard } from 'src/auth/guards/api-key.guard';
 import { IncrementBudgetDto } from './dto/increment-budget.dto';
+import { ConsolidatedIncrementDto } from './dto/consolidated-increment.dto';
 
 @Controller('budgets')
 @UseGuards(AuthGuard()) 
@@ -49,4 +50,15 @@ export class BudgetsController {
   ): Promise<{status:string; message: string; data:Budget}>  {
     return this.budgetsService.incrementBudget(incrementBudgetDto);
   }
+
+
+
+  @Patch('/consolidated-increment')
+  @UseGuards(ApiKeyGuard)
+  consolidatedIncrement(
+    @Body(ValidationPipe) consolidatedIncrementDto: ConsolidatedIncrementDto,
+  ): Promise<{ status: string; message: string; data: Budget }> {
+    return this.budgetsService.consolidatedIncrement(consolidatedIncrementDto);
+  }
+
 }

@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { CreateBudgetDto } from './dto/create-budget.dto';
 import { Budget } from './budget.entity';
 import { IncrementBudgetDto } from './dto/increment-budget.dto';
+import { ConsolidatedIncrementDto } from './dto/consolidated-increment.dto';
 
 @Injectable()
 export class BudgetsService {
@@ -120,6 +121,48 @@ export class BudgetsService {
       message: "Successfully updated budget",
       data: budget
     }
+  }
+
+
+  async consolidatedIncrement(dto: ConsolidatedIncrementDto): Promise<{ status: string; message: string; data: Budget }> {
+    const { mda, fundingSource, budgetLine, fiscalYear, amount } = dto;
+
+    // Step 1: Find or create the Funding Source and increment its total
+    let fsEntity = await this.fundingSourceRepository.findOne({ where: { name: fundingSource } });
+    if (fsEntity) {
+      fsEntity.amount = Number(fsEntity.amount) + amount;
+    } else {
+      fsEntity = this.fundingSourceRepository.create({ name: fundingSource, amount: amount });
+    }
+    await this.fundingSourceRepository.save(fsEntity);
+
+    // Step 2: Find or create the Budget Line and increment its total
+    let blEntity = await this.budgetLineRepository.findOne({ where: { name: budgetLine, mda: mda } });
+    if (blEntity) {
+      blEntity.amount = Number(blEntity.amount) + amount;
+    } else {
+      blEntity = this.budgetLineRepository.create({ name: budgetLine, amount: amount, mda: mda });
+    }
+    await this.budgetLineRepository.save(blEntity);
+
+    // Step 3: Find or create the specific Budget cell and increment its amount
+    let budget = await this.budgetsRepository.findOne({
+      where: { mda, fundingSource, budgetLine, fiscalYear },
+    });
+
+    if (budget) {
+      budget.amount = Number(budget.amount) + amount;
+    } else {
+      budget = this.budgetsRepository.create({ mda, fundingSource, budgetLine, fiscalYear, amount });
+    }
+    
+    const savedBudget = await this.budgetsRepository.save(budget);
+
+    return {
+      status: "success",
+      message: "Successfully performed consolidated budget increment.",
+      data: savedBudget
+    };
   }
 
 }
