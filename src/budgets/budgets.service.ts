@@ -162,6 +162,7 @@ export class BudgetsService {
       status: "success",
       message: "Successfully performed consolidated budget increment.",
       data: savedBudget
+      
     };
   }
 
