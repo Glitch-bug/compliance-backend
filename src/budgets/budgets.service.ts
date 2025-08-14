@@ -5,14 +5,20 @@ import { CreateBudgetDto } from './dto/create-budget.dto';
 import { Budget } from './budget.entity';
 import { IncrementBudgetDto } from './dto/increment-budget.dto';
 import { ConsolidatedIncrementDto } from './dto/consolidated-increment.dto';
+import { FundingSource } from 'src/admin/entities/funding-source.entity';
+import { BudgetLine } from 'src/admin/entities/budget-line.entity';
 
 @Injectable()
 export class BudgetsService {
-  fundingSourceRepository: any;
-  budgetLineRepository: any;
+  // fundingSourceRepository: any;
+  // budgetLineRepository: any;
   constructor(
     @InjectRepository(Budget)
     private readonly budgetsRepository: Repository<Budget>,
+    @InjectRepository(FundingSource)
+    private readonly fundingSourceRepository: Repository<FundingSource>,
+    @InjectRepository(BudgetLine)
+    private readonly budgetLineRepository: Repository<BudgetLine>,
   ) {}
 
   /**
@@ -91,11 +97,6 @@ export class BudgetsService {
   async incrementBudget(incrementDto: IncrementBudgetDto): Promise<{status:string; message: string; data: Budget}> {
     const { mda, fundingSource, budgetLine, fiscalYear, amount } = incrementDto;
 
-    let fsEntity = await this.fundingSourceRepository.findOne({ where: { name: fundingSource } });
-    if (!fsEntity) {
-      fsEntity = this.fundingSourceRepository.create({ name: fundingSource, amount: amount });
-      await this.fundingSourceRepository.save(fsEntity);
-    }
 
 
     let budget = await this.budgetsRepository.findOne({
@@ -124,17 +125,8 @@ export class BudgetsService {
   }
 
 
-  async consolidatedIncrement(dto: ConsolidatedIncrementDto): Promise<{ status: string; message: string; data: Budget }> {
+  async consolidatedIncrementFunc(dto: ConsolidatedIncrementDto): Promise<{ status: string; message: string; data: Budget }> {
     const { mda, fundingSource, budgetLine, fiscalYear, amount } = dto;
-
-    // Step 1: Find or create the Funding Source and increment its total
-    let fsEntity = await this.fundingSourceRepository.findOne({ where: { name: fundingSource } });
-    if (fsEntity) {
-      fsEntity.amount = Number(fsEntity.amount) + amount;
-    } else {
-      fsEntity = this.fundingSourceRepository.create({ name: fundingSource, amount: amount });
-    }
-    await this.fundingSourceRepository.save(fsEntity);
 
     // Step 2: Find or create the Budget Line and increment its total
     let blEntity = await this.budgetLineRepository.findOne({ where: { name: budgetLine, mda: mda } });
@@ -162,7 +154,7 @@ export class BudgetsService {
       status: "success",
       message: "Successfully performed consolidated budget increment.",
       data: savedBudget
-      
+
     };
   }
 
