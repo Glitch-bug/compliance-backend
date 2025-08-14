@@ -8,7 +8,7 @@ import { IncrementBudgetDto } from './dto/increment-budget.dto';
 import { ConsolidatedIncrementDto } from './dto/consolidated-increment.dto';
 
 @Controller('budgets')
-@UseGuards(AuthGuard()) 
+
 // Keep this commented out for now
 export class BudgetsController {
   // Create a logger instance for this controller
@@ -20,6 +20,7 @@ export class BudgetsController {
   }
 
   @Get('/:mda/:fiscalYear')
+  @UseGuards(AuthGuard()) 
   getBudgetsForMda(
     @Param('mda') mda: string,
     @Param('fiscalYear', ParseIntPipe) fiscalYear: number,
@@ -29,6 +30,7 @@ export class BudgetsController {
   }
 
   @Post()
+  @UseGuards(AuthGuard()) 
   upsertBudgets(
     @Body(ValidationPipe) createBudgetDtos: CreateBudgetDto[],
   ): Promise<Budget[]> {
@@ -36,6 +38,7 @@ export class BudgetsController {
   }
 
   @Delete('/mda/:mda/:fiscalYear')
+  @UseGuards(AuthGuard()) 
   deleteBudgetsForMda(
     @Param('mda') mda: string,
     @Param('fiscalYear', ParseIntPipe) fiscalYear: number,
