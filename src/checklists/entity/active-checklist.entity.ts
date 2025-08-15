@@ -8,6 +8,7 @@ export class ChecklistItem {
   text: string;
   completed: boolean;
   lastUpdated: Date;
+  amount?: number|null;
 }
 
 @Entity('active_checklists')
