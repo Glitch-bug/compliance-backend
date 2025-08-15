@@ -73,29 +73,45 @@ export class ChecklistsService {
     return { status: "success", message: "Active checklists", data: checklists };
   }
 
-  async updateActiveChecklist(id: string, updateDto: UpdateActiveChecklistDto): Promise<ActiveChecklist> {
+  async updateActiveChecklist(
+    id: string,
+    updateDto: UpdateActiveChecklistDto
+  ): Promise<ActiveChecklist> {
     const checklist = await this.activeChecklistsRepository.findOneBy({ id });
     if (!checklist) {
       throw new NotFoundException(`Checklist with ID "${id}" not found`);
     }
 
     const now = new Date();
-    // Compare the incoming items with the existing ones to see what changed.
+
     const updatedItems = checklist.items.map((existingItem, index) => {
       const incomingItem = updateDto.items[index];
-      // If the completion status has changed, update the lastUpdated timestamp.
-      if (existingItem.completed !== incomingItem.completed) {
-        return {
-          ...incomingItem,
-          lastUpdated: now,
-        };
+
+      // Default amount to 0.0 if missing
+      const amount = incomingItem.amount ?? 0.0;
+
+      // Build the new item starting from incoming values
+      const newItem = {
+        ...incomingItem,
+        amount,
+      };
+
+      // Update timestamp only if completed or amount changed
+      if (
+        existingItem.completed !== incomingItem.completed ||
+        (existingItem.amount ?? 0.0) !== amount
+      ) {
+        newItem.lastUpdated = now;
+      } else {
+        newItem.lastUpdated = existingItem.lastUpdated;
       }
-      // Otherwise, keep the existing item data, including its original lastUpdated timestamp.
-      return existingItem;
+
+      return newItem;
     });
 
     checklist.items = updatedItems;
 
+    // Update checklist status based on all items completion
     const isCompleted = checklist.items.every(item => item.completed);
     checklist.status = isCompleted ? 'Completed' : 'In Progress';
 

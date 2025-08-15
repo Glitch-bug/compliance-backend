@@ -7,7 +7,7 @@ import { BudgetLine } from 'src/admin/entities/budget-line.entity';
 export class ChecklistItem {
   text: string;
   completed: boolean;
-  lastUpdated: Date;
+  lastUpdated?: Date|null;
   amount?: number|null;
 }
 

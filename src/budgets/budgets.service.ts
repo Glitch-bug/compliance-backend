@@ -128,6 +128,13 @@ export class BudgetsService {
   async consolidatedIncrementFunc(dto: ConsolidatedIncrementDto): Promise<{ status: string; message: string; data: Budget }> {
     const { mda, fundingSource, budgetLine, fiscalYear, amount } = dto;
 
+        // Step 1: Find or create the Funding Source and increment its total
+    let fsEntity = await this.fundingSourceRepository.findOne({ where: { name: fundingSource } });
+    if (!fsEntity){
+      fsEntity = this.fundingSourceRepository.create({ name: fundingSource });
+    }
+
+
     // Step 2: Find or create the Budget Line and increment its total
     let blEntity = await this.budgetLineRepository.findOne({ where: { name: budgetLine, mda: mda } });
     if (blEntity) {
