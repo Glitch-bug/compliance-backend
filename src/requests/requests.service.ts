@@ -1,4 +1,4 @@
-import { Injectable, ForbiddenException } from '@nestjs/common';
+import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { Request as RequestEntity } from './request.entity';
@@ -59,5 +59,14 @@ export class RequestsService {
 
     Object.assign(request, updateRequestDto);
     return this.requestsRepository.save(request);
+  }
+
+
+
+  async remove(id: string): Promise<void> {
+    const result = await this.requestsRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Request with ID "${id}" not found`);
+    }
   }
 }
