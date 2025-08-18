@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, UseGuards, SetMetadata, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, UseGuards, SetMetadata, Query, HttpCode, HttpStatus, Delete } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../shared/user.decorator';
 import { User } from '../users/user.entity';
@@ -6,25 +6,30 @@ import { RequestsService } from './requests.service';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
 import { RolesGuard } from '../auth/guards/roles.guard';
+import { Role } from 'src/users/roles.enum';
+import { ApiKeyGuard } from 'src/auth/guards/api-key.guard';
 
 @Controller('requests')
-@UseGuards(AuthGuard())
+
 export class RequestsController {
   constructor(private readonly requestsService: RequestsService) {}
 
   @Post()
+  @UseGuards(AuthGuard())
   @UseGuards(RolesGuard)
   @SetMetadata('roles', ['MDA'])
   create(@Body() createRequestDto: CreateRequestDto, @GetUser() user: User) {
     return this.requestsService.create(createRequestDto, user);
   }
 
+  @UseGuards(AuthGuard())
   @Get()
   findAll(@GetUser() user: User, @Query('mda') mda?: string) {
     return this.requestsService.findAll(user, mda);
   }
   
   @Get('/review')
+  @UseGuards(AuthGuard())
   @UseGuards(RolesGuard)
   @SetMetadata('roles', ['MoF Compliance', 'IAA Auditor', 'Minister'])
   findForReview() {
@@ -32,9 +37,18 @@ export class RequestsController {
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard())
   @UseGuards(RolesGuard)
   @SetMetadata('roles', ['MoF Compliance', 'IAA Auditor', 'Minister', 'MDA'])
   update(@Param('id') id: string, @Body() updateRequestDto: UpdateRequestDto, @GetUser() user: User) {
     return this.requestsService.update(id, updateRequestDto, user);
+  }
+
+  @Delete(':id')
+  @UseGuards(ApiKeyGuard)
+  @SetMetadata('roles', [Role.Admin])
+  @HttpCode(HttpStatus.NO_CONTENT)
+  remove(@Param('id') id: string) {
+    return this.requestsService.remove(id);
   }
 }
