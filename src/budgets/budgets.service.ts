@@ -108,7 +108,7 @@ export class BudgetsService {
       budget.amount = Number(budget.amount) + amount;
     } else {
       // If it doesn't exist, create a new record with the specified amount.
-      budget = this.budgetsRepository.create({
+    budget = this.budgetsRepository.create({
         mda,
         fundingSource,
         budgetLine,
@@ -117,10 +117,12 @@ export class BudgetsService {
       });
     }
 
+    const saved = await this.budgetsRepository.save(budget);
+
     return {
       status:"success",
       message: "Successfully updated budget",
-      data: budget
+      data: saved
     }
   }
 

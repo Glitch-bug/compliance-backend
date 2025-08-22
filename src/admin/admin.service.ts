@@ -38,11 +38,11 @@ export class AdminService {
 
   async createBudgetLine(createBudgetLineDto: CreateBudgetLineDto): Promise<{ status: string; message: string; data: BudgetLine }> {
     const newBudgetLine = this.budgetLineRepo.create(createBudgetLineDto);
-    this.budgetLineRepo.save(newBudgetLine);
+    const savedBudgetLine = await this.budgetLineRepo.save(newBudgetLine);
     return {
         status: "success",
         message: `Successfully created new budget line "${newBudgetLine.name}".`,
-        data: newBudgetLine
+        data: savedBudgetLine
     };
   }
 
