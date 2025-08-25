@@ -1,10 +1,14 @@
-import { IsString, IsNumber, IsOptional, IsBoolean } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsBoolean, IsNotEmpty, IsUUID } from 'class-validator';
 
 export class CreateRequestDto {
   @IsString() title: string;
   @IsNumber() amount: number;
-  @IsString() fundingSource: string;
-  @IsString() budgetLine: string;
+  @IsUUID()
+  @IsNotEmpty()
+  fundingSourceId: string;
+  @IsUUID()
+  @IsNotEmpty()
+  budgetLineId: string;
   @IsOptional() @IsBoolean() isJoint?: boolean;
   @IsOptional() @IsString() partnerMda?: string;
   @IsOptional() @IsNumber() mdaContribution?: number;

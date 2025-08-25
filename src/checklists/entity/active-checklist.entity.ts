@@ -42,15 +42,6 @@ export class ActiveChecklist {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
-  // ✅ Raw FK column
-  @Column({ name: 'budget_line_id', type: 'uuid', nullable: true })
-  budgetLineId: string;
-  
-  @ManyToOne(() => BudgetLine, (budgetLine) => budgetLine.active_checklists)
-  @JoinColumn({ name: 'budget_line_id' })
-  budgetLine: BudgetLine;
-
-
   @OneToOne(() => Request, (request) => request.active_checklist)
   @JoinColumn({ name: 'request_id' })
   request: Request;

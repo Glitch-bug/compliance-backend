@@ -6,12 +6,18 @@ import { CreateRequestDto } from './dto/create-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
 import { User } from '../users/user.entity';
 import { Role } from 'src/users/roles.enum';
+import { ActiveChecklist } from 'src/checklists/entity/active-checklist.entity';
+import { ChecklistTemplate } from 'src/checklists/checklist-template.entity';
 
 @Injectable()
 export class RequestsService {
   constructor(
     @InjectRepository(RequestEntity)
     private requestsRepository: Repository<RequestEntity>,
+    @InjectRepository(ActiveChecklist)
+    private activeChecklistsRepository: Repository<ActiveChecklist>,
+    @InjectRepository(ChecklistTemplate)
+    private checklistTemplatesRepository: Repository<ChecklistTemplate>,
   ) { }
 
   async create(createRequestDto: CreateRequestDto, user: User): Promise<RequestEntity> {
@@ -28,9 +34,9 @@ export class RequestsService {
     // const universalRoles = ['MoF Compliance', 'IAA Auditor', 'Minister', 'System Admin'];
     const universalRoles: Role[] = [Role.MoF, Role.IAA, Role.Minister, Role.Admin];
     if (universalRoles.includes(user.role)) {
-      if (mda && mda !== 'All MDAs'){
-        return this.requestsRepository.find({ where: [{ mda: mda }, {partnerMda: mda}] });
-      }else {
+      if (mda && mda !== 'All MDAs') {
+        return this.requestsRepository.find({ where: [{ mda: mda }, { partnerMda: mda }] });
+      } else {
         return this.requestsRepository.find();
       }
 
@@ -57,8 +63,43 @@ export class RequestsService {
       delete updateRequestDto.reviewComments;
     }
 
+    if (request.status === 'approved') {
+      await this.createProjectChecklistForRequest(request);
+    }
+
+
     Object.assign(request, updateRequestDto);
     return this.requestsRepository.save(request);
+  }
+
+
+  private async createProjectChecklistForRequest(request: RequestEntity): Promise<void> {
+    const templateName = 'PROJECT';
+    const template = await this.checklistTemplatesRepository.findOne({ where: { name: templateName } });
+
+    if (!template) {
+      console.warn(`Default project checklist template "${templateName}" not found. Skipping checklist creation.`);
+      return;
+    }
+
+    const creationDate = new Date();
+    const checklistItems = template.items.map(itemText => ({
+      text: itemText,
+      completed: false,
+      lastUpdated: creationDate,
+    }));
+
+    const activeChecklist = this.activeChecklistsRepository.create({
+      templateId: template.id,
+      name: `Project Checklist for: ${request.title}`,
+      mda: request.mda,
+      status: 'In Progress',
+      items: checklistItems,
+      createdAt: creationDate,
+      request: request, // Associate the checklist with the request
+    });
+
+    await this.activeChecklistsRepository.save(activeChecklist);
   }
 
 
