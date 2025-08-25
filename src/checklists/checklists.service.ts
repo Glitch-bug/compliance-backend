@@ -3,7 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ActiveChecklist } from './entity/active-checklist.entity';
-import { ChecklistTemplate } from './checklist-template.entity';
+import { ChecklistTemplate } from './entity/checklist-template.entity';
 import { CreateActiveChecklistDto } from './dto/create-active-checklist.dto';
 import { UpdateActiveChecklistDto } from './dto/update-active-checklist.dto';
 import { User } from '../users/user.entity';

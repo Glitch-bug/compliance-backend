@@ -4,10 +4,10 @@ import { Request as RequestEntity } from './request.entity';
 import { RequestsController } from './requests.controller';
 import { RequestsService } from './requests.service';
 import { AuthModule } from '../auth/auth.module';
-import { ChecklistsModule } from 'src/checklists/checklists.module';
+import { ActiveChecklist } from 'src/checklists/entity/active-checklist.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([RequestEntity]), AuthModule, ChecklistsModule],
+  imports: [TypeOrmModule.forFeature([RequestEntity, ActiveChecklist]), AuthModule,],
   controllers: [RequestsController],
   providers: [RequestsService],
 })

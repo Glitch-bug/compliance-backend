@@ -7,7 +7,7 @@ import { UpdateRequestDto } from './dto/update-request.dto';
 import { User } from '../users/user.entity';
 import { Role } from 'src/users/roles.enum';
 import { ActiveChecklist } from 'src/checklists/entity/active-checklist.entity';
-import { ChecklistTemplate } from 'src/checklists/checklist-template.entity';
+import { ChecklistTemplate } from 'src/checklists/entity/checklist-template.entity';
 
 @Injectable()
 export class RequestsService {
