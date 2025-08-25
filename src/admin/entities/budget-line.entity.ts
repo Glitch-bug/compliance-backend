@@ -19,14 +19,6 @@ export class BudgetLine {
   amount: number;
 
 
-  @Column({
-    type: 'varchar',
-    length: 256,
-    default: 'Bosomtwe District Assembly',
-    nullable: true,
-    comment: 'The Ministry, Department, or Agency this budget line belongs to'
-  })
-  mda: string;
   /*
   // Example of a Many-to-One relationship with FundingSource.
   // Don't forget to add a corresponding One-to-Many on the FundingSource entity.
