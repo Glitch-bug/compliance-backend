@@ -1,5 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+// src/requests/request.entity.ts
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { User } from '../users/user.entity';
+import { ActiveChecklist } from 'src/checklists/entity/active-checklist.entity';
 
 @Entity('requests')
 export class Request {
@@ -45,7 +47,7 @@ export class Request {
 
   @Column({ name: 'local_content_percentage', nullable: true })
   localContentPercentage: number;
-  
+
   @Column({ name: 'is_joint', default: false })
   isJoint: boolean;
 
@@ -66,4 +68,8 @@ export class Request {
 
   @Column({ name: 'risk_analysis', nullable: true })
   riskAnalysis: string;
+
+  @OneToOne(() => ActiveChecklist, (activeChecklist) => activeChecklist.request)
+  active_checklist: ActiveChecklist;
+
 }
