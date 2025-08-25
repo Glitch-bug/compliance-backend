@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import {Request} from 'src/requests/request.entity';
 
 @Entity('funding_sources')
 export class FundingSource {
@@ -16,4 +17,7 @@ export class FundingSource {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => Request, (request) => request.fundingSource)
+  requests: Request[];
 }

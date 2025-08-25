@@ -2,6 +2,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { User } from '../users/user.entity';
 import { ActiveChecklist } from 'src/checklists/entity/active-checklist.entity';
+import { BudgetLine } from 'src/admin/entities/budget-line.entity';
+import { FundingSource } from 'src/admin/entities/funding-source.entity';
 
 @Entity('requests')
 export class Request {
@@ -19,12 +21,6 @@ export class Request {
 
   @Column()
   status: string;
-
-  @Column({ name: 'funding_source' })
-  fundingSource: string;
-
-  @Column({ name: 'budget_line', nullable: true })
-  budgetLine: string;
 
   @CreateDateColumn({ name: 'submitted_date' })
   submittedDate: Date;
@@ -72,4 +68,19 @@ export class Request {
   @OneToOne(() => ActiveChecklist, (activeChecklist) => activeChecklist.request)
   active_checklist: ActiveChecklist;
 
+  // ✅ Raw FK column
+  @Column({ name: 'budget_line_id', type: 'uuid', nullable: true })
+  budgetLineId: string;
+  
+  @ManyToOne(() => BudgetLine, (budgetLine) => budgetLine.requests)
+  @JoinColumn({ name: 'budget_line_id' })
+  budgetLine: BudgetLine;
+
+
+  @Column({ name: 'funding_source_id', type: 'uuid', nullable: true })
+  fundingSourceId: string;
+  
+  @ManyToOne(() => FundingSource, (fundingSource) => fundingSource.requests)
+  @JoinColumn({ name: 'funding_source_id' })
+  fundingSource: FundingSource;
 }

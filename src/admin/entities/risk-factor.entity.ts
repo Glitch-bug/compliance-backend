@@ -32,4 +32,6 @@ export class RiskFactor {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+
 }

@@ -40,7 +40,6 @@ export class ChecklistsService {
       status: 'In Progress',
       items: checklistItems,
       createdAt: creationDate,
-      budgetLine: { id: createDto.budgetLineId }
     });
 
     return this.activeChecklistsRepository.save(activeChecklist);
