@@ -138,11 +138,11 @@ export class BudgetsService {
 
 
     // Step 2: Find or create the Budget Line and increment its total
-    let blEntity = await this.budgetLineRepository.findOne({ where: { name: budgetLine, mda: mda } });
+    let blEntity = await this.budgetLineRepository.findOne({ where: { name: budgetLine,} });
     if (blEntity) {
       blEntity.amount = Number(blEntity.amount) + amount;
     } else {
-      blEntity = this.budgetLineRepository.create({ name: budgetLine, amount: amount, mda: mda });
+      blEntity = this.budgetLineRepository.create({ name: budgetLine, amount: amount,});
     }
     await this.budgetLineRepository.save(blEntity);
 
