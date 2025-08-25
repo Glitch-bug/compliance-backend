@@ -1,6 +1,6 @@
 // src/checklists/active-checklist.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToOne } from 'typeorm';
-import { ChecklistTemplate } from '../checklist-template.entity';
+import { ChecklistTemplate } from './checklist-template.entity';
 import { BudgetLine } from 'src/admin/entities/budget-line.entity';
 import { Request } from 'src/requests/request.entity';
 
@@ -41,6 +41,7 @@ export class ActiveChecklist {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
 
   @OneToOne(() => Request, (request) => request.active_checklist)
   @JoinColumn({ name: 'request_id' })

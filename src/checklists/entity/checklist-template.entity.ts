@@ -1,6 +1,6 @@
 // src/checklists/checklist-template.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { User } from '../users/user.entity';
+import { User } from '../../users/user.entity';
 
 @Entity('checklist_templates')
 export class ChecklistTemplate {
