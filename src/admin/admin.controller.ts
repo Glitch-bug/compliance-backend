@@ -23,8 +23,8 @@ export class AdminController {
 
   @Get('/budget-lines')
   @UseGuards(ApiKeyGuard)
-  getBudgetLines(@Query('mda') mda?: string) {
-    return this.adminService.getBudgetLine(mda);
+  getBudgetLines() {
+    return this.adminService.getBudgetLine();
   }
 
   @Post('/budget-lines')
