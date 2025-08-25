@@ -26,7 +26,7 @@ export class AdminService {
   }
 
 
-  async getBudgetLine(mda: string) {
+  async getBudgetLine() {
 
     return this.budgetLineRepo.find();
 
