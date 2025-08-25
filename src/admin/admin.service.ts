@@ -27,22 +27,18 @@ export class AdminService {
 
 
   async getBudgetLine(mda: string) {
-    console.log(`The Mda ${mda}`)
-    console.log(`Is all mda match ${(mda !== 'All MDAs')}`)
-    if (mda && (mda !== 'All MDAs')) {
-      return this.budgetLineRepo.find({ where: { mda: mda } });
-    } else {
-      return this.budgetLineRepo.find();
-    }
+
+    return this.budgetLineRepo.find();
+
   }
 
   async createBudgetLine(createBudgetLineDto: CreateBudgetLineDto): Promise<{ status: string; message: string; data: BudgetLine }> {
     const newBudgetLine = this.budgetLineRepo.create(createBudgetLineDto);
     const savedBudgetLine = await this.budgetLineRepo.save(newBudgetLine);
     return {
-        status: "success",
-        message: `Successfully created new budget line "${newBudgetLine.name}".`,
-        data: savedBudgetLine
+      status: "success",
+      message: `Successfully created new budget line "${newBudgetLine.name}".`,
+      data: savedBudgetLine
     };
   }
 
@@ -65,31 +61,31 @@ export class AdminService {
     budgetLine.amount = Number(budgetLine.amount) + amountToAdd;
     const updatedBudgetLine = await this.budgetLineRepo.save(budgetLine);
     return {
-        status: "success",
-        message: `Successfully incremented budget line "${updatedBudgetLine.name}" by ${amountToAdd}.`,
-        data: updatedBudgetLine
+      status: "success",
+      message: `Successfully incremented budget line "${updatedBudgetLine.name}" by ${amountToAdd}.`,
+      data: updatedBudgetLine
     };
   }
 
 
-  async incrementBudgetLineAmountWithCreateDto(createBudgetLineDto: CreateBudgetLineDto): Promise<{ status: string; message: string; data: BudgetLine }>  {
-    const budgetLine = await this.budgetLineRepo.findOneBy({id: createBudgetLineDto.id });
+  async incrementBudgetLineAmountWithCreateDto(createBudgetLineDto: CreateBudgetLineDto): Promise<{ status: string; message: string; data: BudgetLine }> {
+    const budgetLine = await this.budgetLineRepo.findOneBy({ id: createBudgetLineDto.id });
 
     if (!budgetLine) {
       throw new NotFoundException(`BudgetLine with ID "${createBudgetLineDto.id}" not found`);
     }
     // TypeORM automatically handles converting string from DB to number
-    budgetLine.amount = Number(budgetLine.amount) +  createBudgetLineDto.amount;
-        const updatedBudgetLine = await this.budgetLineRepo.save(budgetLine);
+    budgetLine.amount = Number(budgetLine.amount) + createBudgetLineDto.amount;
+    const updatedBudgetLine = await this.budgetLineRepo.save(budgetLine);
     return {
-        status: "success",
-        message: `Successfully incremented budget line "${updatedBudgetLine.name}" by ${createBudgetLineDto.amount}.`,
-        data: updatedBudgetLine
+      status: "success",
+      message: `Successfully incremented budget line "${updatedBudgetLine.name}" by ${createBudgetLineDto.amount}.`,
+      data: updatedBudgetLine
     };
   }
 
 
-    // --- New Delete Methods ---
+  // --- New Delete Methods ---
 
   async deleteFundingSource(id: string): Promise<void> {
     const result = await this.fundingSourceRepo.delete(id);

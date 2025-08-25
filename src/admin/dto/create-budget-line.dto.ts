@@ -17,10 +17,6 @@ export class CreateBudgetLineDto {
   @IsOptional()
   description?: string;
 
-  @IsString()
-  @IsOptional()
-  mda?: string;
-
   @ValidateIf((o) => o.amount !== null && o.amount !== undefined)
   @IsNumber()
   @IsPositive()
