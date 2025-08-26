@@ -16,7 +16,7 @@ export class RequestsController {
 
   @Post()
   @UseGuards(AuthGuard())
-  // @UseGuards(RolesGuard)
+  @UseGuards(RolesGuard)
   // @SetMetadata('roles', ['MDA'])
   create(@Body() createRequestDto: CreateRequestDto, @GetUser() user: User) {
     console.log(`Lets go people ${user}`);
