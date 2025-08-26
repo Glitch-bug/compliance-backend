@@ -15,7 +15,7 @@ export class RequestsController {
   constructor(private readonly requestsService: RequestsService) {}
 
   @Post()
-  @UseGuards(RolesGuard, AuthGuard())
+  @UseGuards(AuthGuard(), RolesGuard)
   @SetMetadata('roles', ['MDA'])
   create(@Body() createRequestDto: CreateRequestDto, @GetUser() user: User) {
     console.log(`Lets go people ${user}`);
