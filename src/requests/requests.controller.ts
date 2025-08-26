@@ -32,7 +32,7 @@ export class RequestsController {
   @UseGuards(AuthGuard(), RolesGuard)
   @SetMetadata('roles', ['MoF Compliance', 'IAA Auditor', 'Minister'])
   findForReview() {
-    return this.requestsService.findForReview();
+    return this.requestsService.findForReview("notexternal");
   }
 
   @Get('/review/external')
