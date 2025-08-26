@@ -29,14 +29,14 @@ export class RequestsController {
   }
   
   @Get('/review')
-  @UseGuards(RolesGuard, AuthGuard())
+  @UseGuards(AuthGuard(), RolesGuard)
   @SetMetadata('roles', ['MoF Compliance', 'IAA Auditor', 'Minister'])
   findForReview() {
     return this.requestsService.findForReview();
   }
 
   @Patch(':id')
-  @UseGuards(RolesGuard, AuthGuard())
+  @UseGuards(AuthGuard(), RolesGuard)
   @SetMetadata('roles', ['MoF Compliance', 'IAA Auditor', 'Minister', 'MDA'])
   update(@Param('id') id: string, @Body() updateRequestDto: UpdateRequestDto, @GetUser() user: User) {
     return this.requestsService.update(id, updateRequestDto, user);
@@ -44,9 +44,16 @@ export class RequestsController {
 
   @Delete(':id')
   @UseGuards(ApiKeyGuard)
-  @SetMetadata('roles', [Role.Admin])
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string) {
+    return this.requestsService.remove(id);
+  }
+
+  @Delete('/delete:id')
+  @UseGuards(ApiKeyGuard)
+  @SetMetadata('roles', [Role.Admin])
+  @HttpCode(HttpStatus.NO_CONTENT)
+  removeRequest(@Param('id') id: string) {
     return this.requestsService.remove(id);
   }
 }
