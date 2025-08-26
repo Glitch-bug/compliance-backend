@@ -64,11 +64,28 @@ export class RequestsService {
       .where('request.status IN (:...statuses)', { statuses: statusesForReview });
 
     console.log(`HELLO THIS IS THE ${type}`);
+
     if (type === 'external') {
-      qb.andWhere('fundingSource.name = :fsName', { fsName: 'Development Action Community Fund (DACF)' });
-    } else{
-      qb.andWhere('fundingSource.name != :fsName', { fsName: 'Development Action Community Fund (DACF)' });
+      // external: only Pending Review + fundingSource.name = 'soAndSo'
+      qb.where('request.status = :pending', { pending: 'Pending Review' })
+        .andWhere('fundingSource.name = :fsName', { fsName: 'Development Action Community Fund (DACF)'});
+
+    } else {
+      // internal:
+      // (1) always include Awaiting Co-Submitter Approval
+      // (2) include Pending Review unless fundingSource = soAndSo
+      qb.where(
+        `(request.status = :awaiting) 
+          OR (request.status = :pending AND fundingSource.name != :fsName)`
+      )
+      .setParameters({
+        awaiting: 'Awaiting Co-Submitter Approval',
+        pending: 'Pending Review',
+        fsName: 'Development Action Community Fund (DACF)',
+      });
+
     }
+
 
     return qb.getMany();
   }
