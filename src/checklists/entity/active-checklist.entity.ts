@@ -1,8 +1,9 @@
 // src/checklists/active-checklist.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToOne, OneToMany } from 'typeorm';
 import { ChecklistTemplate } from './checklist-template.entity';
 import { BudgetLine } from 'src/admin/entities/budget-line.entity';
 import { Request } from 'src/requests/request.entity';
+import { Asset } from 'src/assets/asset.entity';
 
 
 export class ChecklistItem {
@@ -46,4 +47,8 @@ export class ActiveChecklist {
   @OneToOne(() => Request, (request) => request.active_checklist)
   @JoinColumn({ name: 'request_id' })
   request: Request;
+
+  @OneToMany(() => Asset, (asset) => asset.activeChecklist)
+  @JoinColumn({ name: 'asset_id' })
+  assets: Asset[];
 }
