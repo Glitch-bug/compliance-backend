@@ -17,11 +17,7 @@ export class CreateAssetDto {
   @IsNumber()
   @IsNotEmpty()
   value: number;
-
-  @IsUUID()
-  @IsNotEmpty()
-  budgetLineId: string;  
-
+  
   @IsString()
   @IsNotEmpty()
   mda: string;
