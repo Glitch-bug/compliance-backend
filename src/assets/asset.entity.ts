@@ -19,9 +19,6 @@ export class Asset {
   @Column({ type: 'numeric', precision: 15, scale: 2 })
   value: number;
 
-  @Column({ name: 'funding_source' })
-  fundingSource: string;
-
   @Column()
   mda: string;
 

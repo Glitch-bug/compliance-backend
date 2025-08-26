@@ -1,5 +1,5 @@
 // src/assets/dto/create-asset.dto.ts
-import { IsString, IsNumber, IsNotEmpty, IsDateString } from 'class-validator';
+import { IsString, IsNumber, IsNotEmpty, IsDateString, IsUUID } from 'class-validator';
 
 export class CreateAssetDto {
   @IsString()
@@ -18,7 +18,11 @@ export class CreateAssetDto {
   @IsNotEmpty()
   value: number;
 
+  @IsUUID()
+  @IsNotEmpty()
+  budgetLineId: string;  
+
   @IsString()
   @IsNotEmpty()
-  fundingSource: string;
+  mda: string;
 }
