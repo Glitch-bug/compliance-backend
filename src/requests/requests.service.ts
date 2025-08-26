@@ -63,7 +63,7 @@ export class RequestsService {
       .leftJoinAndSelect('request.fundingSource', 'fundingSource')
       .where('request.status IN (:...statuses)', { statuses: statusesForReview });
 
-    console.log(type);
+    console.log(`HELLO THIS IS THE ${type}`);
     if (type === 'external') {
       qb.andWhere('fundingSource.name = :fsName', { fsName: 'Development Action Community Fund (DACF)' });
     } else{
