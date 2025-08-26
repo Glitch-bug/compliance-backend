@@ -64,7 +64,7 @@ export class RequestsService {
       delete updateRequestDto.reviewComments;
     }
 
-    if (request.status === 'approved') {
+    if (request.status === 'Approved') {
       await this.createProjectChecklistForRequest(request);
     }
 
