@@ -55,7 +55,7 @@ export class RequestsService {
 
   // }
 
-  async findForReview(type?: string): Promise<RequestEntity[]> {
+  async findForReview(type?: string): Promise<{ status: string; message: string; data:RequestEntity[];}>{
     const statusesForReview = ['Pending Review', 'Awaiting Co-Submitter Approval'];
 
     const qb = this.requestsRepository
@@ -68,7 +68,7 @@ export class RequestsService {
     if (type === 'external') {
       // external: only Pending Review + fundingSource.name = 'soAndSo'
       qb.where('request.status = :pending', { pending: 'Pending Review' })
-        .andWhere('fundingSource.name = :fsName', { fsName: 'Development Action Community Fund (DACF)'});
+        .andWhere('fundingSource.name = :fsName', { fsName: 'Development Action Community Fund (DACF)' });
 
     } else {
       // internal:
@@ -78,16 +78,19 @@ export class RequestsService {
         `(request.status = :awaiting) 
           OR (request.status = :pending AND fundingSource.name != :fsName)`
       )
-      .setParameters({
-        awaiting: 'Awaiting Co-Submitter Approval',
-        pending: 'Pending Review',
-        fsName: 'Development Action Community Fund (DACF)',
-      });
+        .setParameters({
+          awaiting: 'Awaiting Co-Submitter Approval',
+          pending: 'Pending Review',
+          fsName: 'Development Action Community Fund (DACF)',
+        });
 
     }
+    var requests = await qb.getMany();
+
+    return { status: "success", message: "Request updated successfully", data: requests};
 
 
-    return qb.getMany();
+    // return qb.getMany();
   }
 
   async update(id: string, updateRequestDto: UpdateRequestDto, user: User): Promise<RequestEntity> {
@@ -115,7 +118,8 @@ export class RequestsService {
   }
 
 
-  async updateExternal(id: string, updateRequestDto: UpdateRequestDto,): Promise<RequestEntity> {
+  async updateExternal(id: string, updateRequestDto: UpdateRequestDto,): Promise<{ status: string; message: string; data:RequestEntity;}> {
+
     const request = await this.requestsRepository.findOneBy({ id });
     if (!request) {
       throw new Error('Request not found');
@@ -126,7 +130,11 @@ export class RequestsService {
     }
 
     Object.assign(request, updateRequestDto);
-    return this.requestsRepository.save(request);
+    var savedRequest = await this.requestsRepository.save(request);
+    return { status: "success", message: "Request updated successfully", data: savedRequest };
+
+
+
   }
 
 
