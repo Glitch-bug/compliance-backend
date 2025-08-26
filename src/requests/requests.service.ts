@@ -45,9 +45,31 @@ export class RequestsService {
     return this.requestsRepository.find({ where: [{ mda: user.mda }, { partnerMda: user.mda }] });
   }
 
-  async findForReview(): Promise<RequestEntity[]> {
+  // async findForReview(type?: string): Promise<RequestEntity[]> {
+  //   const statusesForReview = ['Pending Review', 'Awaiting Co-Submitter Approval'];
+  //   if (type) {
+  //     return this.requestsRepository.find({ where: { status: In(statusesForReview) } });
+  //   } else {
+  //     return this.requestsRepository.find({ where: { status: In(statusesForReview )} });
+  //   }
+
+  // }
+
+  async findForReview(type?: string): Promise<RequestEntity[]> {
     const statusesForReview = ['Pending Review', 'Awaiting Co-Submitter Approval'];
-    return this.requestsRepository.find({ where: { status: In(statusesForReview) } });
+
+    const qb = this.requestsRepository
+      .createQueryBuilder('request')
+      .leftJoinAndSelect('request.fundingSource', 'fundingSource')
+      .where('request.status IN (:...statuses)', { statuses: statusesForReview });
+
+    if (type === 'external') {
+      qb.andWhere('fundingSource.name = :fsName', { fsName: 'Development Action Community Fund (DACF)' });
+    } else if (type) {
+      qb.andWhere('fundingSource.name != :fsName', { fsName: 'Development Action Community Fund (DACF)' });
+    }
+
+    return qb.getMany();
   }
 
   async update(id: string, updateRequestDto: UpdateRequestDto, user: User): Promise<RequestEntity> {
@@ -73,6 +95,22 @@ export class RequestsService {
     Object.assign(request, updateRequestDto);
     return this.requestsRepository.save(request);
   }
+
+
+  async updateExternal(id: string, updateRequestDto: UpdateRequestDto,): Promise<RequestEntity> {
+    const request = await this.requestsRepository.findOneBy({ id });
+    if (!request) {
+      throw new Error('Request not found');
+    }
+
+    if (request.status === 'Approved') {
+      await this.createProjectChecklistForRequest(request);
+    }
+
+    Object.assign(request, updateRequestDto);
+    return this.requestsRepository.save(request);
+  }
+
 
 
   private async createProjectChecklistForRequest(request: RequestEntity): Promise<void> {
