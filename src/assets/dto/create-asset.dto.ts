@@ -17,8 +17,13 @@ export class CreateAssetDto {
   @IsNumber()
   @IsNotEmpty()
   value: number;
-  
+
   @IsString()
   @IsNotEmpty()
   mda: string;
+
+  @IsUUID()
+  @IsNotEmpty()
+  activeChecklistId: string;  
+
 }
