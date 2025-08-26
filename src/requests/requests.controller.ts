@@ -48,20 +48,19 @@ export class RequestsController {
     return this.requestsService.update(id, updateRequestDto, user);
   }
 
-  @Patch('/external:id')
+  @Patch('/external/:id')
   @UseGuards(ApiKeyGuard)
   updateExternal(@Param('id') id: string, @Body() updateRequestDto: UpdateRequestDto,) {
     return this.requestsService.updateExternal(id, updateRequestDto,);
   }
 
-  @Delete(':id')
+  @Delete('/:id')
   @UseGuards(ApiKeyGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string) {
     return this.requestsService.remove(id);
   }
 
-  @Delete('/delete:id')
+  @Delete('/delete/:id')
   @UseGuards(ApiKeyGuard)
   @SetMetadata('roles', [Role.Admin])
   @HttpCode(HttpStatus.NO_CONTENT)
