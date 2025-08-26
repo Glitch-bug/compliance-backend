@@ -21,6 +21,7 @@ export class RequestsService {
   ) { }
 
   async create(createRequestDto: CreateRequestDto, user: User): Promise<RequestEntity> {
+    console.log(`come on!: ${user.mda}`);
     const request = this.requestsRepository.create({
       ...createRequestDto,
       mda: user.mda,
