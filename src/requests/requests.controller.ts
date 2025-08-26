@@ -15,8 +15,7 @@ export class RequestsController {
   constructor(private readonly requestsService: RequestsService) {}
 
   @Post()
-  @UseGuards(AuthGuard())
-  @UseGuards(RolesGuard)
+  @UseGuards(RolesGuard, AuthGuard())
   @SetMetadata('roles', ['MDA'])
   create(@Body() createRequestDto: CreateRequestDto, @GetUser() user: User) {
     console.log(`Lets go people ${user}`);
@@ -30,16 +29,14 @@ export class RequestsController {
   }
   
   @Get('/review')
-  @UseGuards(AuthGuard())
-  @UseGuards(RolesGuard)
+  @UseGuards(RolesGuard, AuthGuard())
   @SetMetadata('roles', ['MoF Compliance', 'IAA Auditor', 'Minister'])
   findForReview() {
     return this.requestsService.findForReview();
   }
 
   @Patch(':id')
-  @UseGuards(AuthGuard())
-  @UseGuards(RolesGuard)
+  @UseGuards(RolesGuard, AuthGuard())
   @SetMetadata('roles', ['MoF Compliance', 'IAA Auditor', 'Minister', 'MDA'])
   update(@Param('id') id: string, @Body() updateRequestDto: UpdateRequestDto, @GetUser() user: User) {
     return this.requestsService.update(id, updateRequestDto, user);
