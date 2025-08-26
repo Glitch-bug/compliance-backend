@@ -90,6 +90,8 @@ export class RequestsService {
       lastUpdated: creationDate,
     }));
 
+
+    console.log(`Project: ${request.title}`);
     const activeChecklist = this.activeChecklistsRepository.create({
       templateId: template.id,
       name: `Project: ${request.title}`,
