@@ -23,15 +23,22 @@ export class AssetsController {
   }
 
   @Get()
-  findAll(@GetUser() user: User, @Query('mda') mda?: string) {
-    return this.assetsService.findAll(user, mda);
+  async findAll(@GetUser() user: User, @Query('mda') mda?: string): Promise<any[]> {
+    const assets = await this.assetsService.findAll(user, mda);
+    return assets.map(asset => ({
+      ...asset,
+      fundingSourceName: asset.fundingSourceName, // expose in response
+    }));
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.assetsService.findOne(id);
+  async findOne(@Param('id') id: string): Promise<any> {
+    const asset = await this.assetsService.findOne(id);
+    return {
+      ...asset,
+      fundingSourceName: asset.fundingSourceName,
+    };
   }
-
   // @Patch(':id')
   // @Roles(Role.Admin, Role.Minister)
   // update(@Param('id') id: string, @Body() updateAssetDto: UpdateAssetDto) {

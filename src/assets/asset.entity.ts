@@ -12,7 +12,7 @@ export class Asset {
 
   @Column()
   category: string;
-  
+
   @Column({ name: 'acquired_date', type: 'date' })
   acquiredDate: string;
 
@@ -30,8 +30,13 @@ export class Asset {
 
   @Column({ name: 'active_checklist_id', type: 'uuid', nullable: true })
   activeChecklistId: string;
-  
+
   @ManyToOne(() => ActiveChecklist, (activeChecklist) => activeChecklist.assets)
   @JoinColumn({ name: 'active_checklist_id' })
-  activeChecklist:ActiveChecklist;
+  activeChecklist: ActiveChecklist;
+
+
+  get fundingSourceName(): string | undefined {
+    return this.activeChecklist?.request?.fundingSource?.name;
+  }
 }
