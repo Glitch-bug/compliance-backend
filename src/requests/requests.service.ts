@@ -104,7 +104,7 @@ export class RequestsService {
       throw new Error('Request not found');
     }
 
-    if (request.status === 'Approved') {
+    if (updateRequestDto.status.toLowerCase() === 'Approved'.toLowerCase()) {
       await this.createProjectChecklistForRequest(request);
     }
 
