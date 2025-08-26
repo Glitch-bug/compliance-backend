@@ -1,20 +1,21 @@
 import { Controller, Get, Post, Body, Patch, Param, UseGuards, SetMetadata, Query, HttpCode, HttpStatus, Delete } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../shared/user.decorator';
-import { User } from '../users/user.entity';
+// import { User } from '../users/user.entity';
 import { RequestsService } from './requests.service';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Role } from 'src/users/roles.enum';
 import { ApiKeyGuard } from 'src/auth/guards/api-key.guard';
+import { User } from 'src/users/user.entity';
 
 @Controller('requests')
 export class RequestsController {
   constructor(private readonly requestsService: RequestsService) {}
 
   @Post()
-  // @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard())
   // @UseGuards(RolesGuard)
   // @SetMetadata('roles', ['MDA'])
   create(@Body() createRequestDto: CreateRequestDto, @GetUser() user: User) {
