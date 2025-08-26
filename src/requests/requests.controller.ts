@@ -10,14 +10,13 @@ import { Role } from 'src/users/roles.enum';
 import { ApiKeyGuard } from 'src/auth/guards/api-key.guard';
 
 @Controller('requests')
-
 export class RequestsController {
   constructor(private readonly requestsService: RequestsService) {}
 
   @Post()
-  @UseGuards(AuthGuard())
-  @UseGuards(RolesGuard)
-  @SetMetadata('roles', ['MDA'])
+  // @UseGuards(AuthGuard())
+  // @UseGuards(RolesGuard)
+  // @SetMetadata('roles', ['MDA'])
   create(@Body() createRequestDto: CreateRequestDto, @GetUser() user: User) {
     return this.requestsService.create(createRequestDto, user);
   }

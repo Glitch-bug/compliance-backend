@@ -91,7 +91,7 @@ export class RequestsService {
 
     const activeChecklist = this.activeChecklistsRepository.create({
       templateId: template.id,
-      name: `Project Checklist for: ${request.title}`,
+      name: `Project: ${request.title}`,
       mda: request.mda,
       status: 'In Progress',
       items: checklistItems,
