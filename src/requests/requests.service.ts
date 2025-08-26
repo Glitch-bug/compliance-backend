@@ -64,7 +64,8 @@ export class RequestsService {
       delete updateRequestDto.reviewComments;
     }
 
-    if (request.status === 'Approved') {
+    console.log(`Status ${request.status.toLowerCase()}`);
+    if (request.status.toLowerCase() === 'Approved'.toLowerCase()) {
       await this.createProjectChecklistForRequest(request);
     }
 
