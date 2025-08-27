@@ -43,10 +43,10 @@ export class GrantsService {
       fsEntity = this.fundingSourceRepository.create({ name: fundingSource });
     }
 
-    var budgetLine = grant.budgetLine
+    var budgetLine = await this.budgetLineRepository.findOne({ where: { id: grant.budgetLineId,} }); 
     console.log(`grant amount ${grant.amount}`);
 
-    budgetLine.amount += grant.amount;
+    budgetLine.amount = budgetLine.amount + grant.amount;
     await this.budgetLineRepository.save(budgetLine);
 
     const fiscalYear = new Date(grant.createdAt).getFullYear();
