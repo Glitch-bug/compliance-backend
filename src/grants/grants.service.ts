@@ -55,8 +55,10 @@ export class GrantsService {
     let budget = await this.budgetsRepository.findOne({where: { mda: grant.mda, fundingSource: fundingSource, budgetLine: budgetLine.name, fiscalYear: fiscalYear,}});
     // console.log(`budget ${budget.amount}`);
     if (budget) {
+      console.log("check");
       budget.amount = isNaN(Number(budget.amount))? 0 + grant.amount : budget.amount + grant.amount;
     } else {
+      console.log("double check");
       budget = this.budgetsRepository.create({ mda: grant.mda, fundingSource: fundingSource, budgetLine: budgetLine.name, fiscalYear: fiscalYear, amount: grant.amount });
     }
     console.log(`budget ${budget.amount}`);
