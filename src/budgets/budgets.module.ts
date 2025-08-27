@@ -16,6 +16,7 @@ import { BudgetLine } from 'src/admin/entities/budget-line.entity';
   ],
   controllers: [BudgetsController],
   providers: [BudgetsService],
+  exports: [BudgetsService]
 })
 export class BudgetsModule {
   constructor() {

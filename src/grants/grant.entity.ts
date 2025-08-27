@@ -1,5 +1,6 @@
 // src/grants/grant.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { BudgetLine } from 'src/admin/entities/budget-line.entity';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity('grants')
 export class Grant {
@@ -26,4 +27,14 @@ export class Grant {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+
+  // ✅ Raw FK column
+  @Column({ name: 'budget_line_id', type: 'uuid', nullable: true })
+  budgetLineId: string;
+  
+  @ManyToOne(() => BudgetLine, (budgetLine) => budgetLine.grants)
+  @JoinColumn({ name: 'budget_line_id' })
+  budgetLine: BudgetLine;
+  
 }

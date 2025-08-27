@@ -1,5 +1,5 @@
 // src/grants/dto/create-grant.dto.ts
-import { IsString, IsNumber, IsNotEmpty } from 'class-validator';
+import { IsString, IsNumber, IsNotEmpty, IsUUID } from 'class-validator';
 
 export class CreateGrantDto {
   @IsString()
@@ -13,4 +13,8 @@ export class CreateGrantDto {
   @IsNumber()
   @IsNotEmpty()
   amount: number;
+
+  @IsUUID()
+  @IsNotEmpty()
+  budgetLineId: string;
 }

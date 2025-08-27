@@ -15,5 +15,6 @@ import { RiskFactor } from './entities/risk-factor.entity';
   ],
   controllers: [AdminController],
   providers: [AdminService],
+  exports: [AdminService]
 })
 export class AdminModule {}
