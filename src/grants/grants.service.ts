@@ -29,6 +29,7 @@ export class GrantsService {
       ...createGrantDto,
       mda: user.mda,
       status: 'Active',
+    
     });
     await this.updateFundingSourceForGrant(grant);
     return this.grantsRepository.save(grant);
@@ -43,6 +44,7 @@ export class GrantsService {
     }
 
     var budgetLine = grant.budgetLine
+    console.log(`grant amount ${grant.amount}`);
 
     budgetLine.amount += grant.amount;
     await this.budgetLineRepository.save(budgetLine);
@@ -50,13 +52,13 @@ export class GrantsService {
     const fiscalYear = new Date(grant.createdAt).getFullYear();
 
     let budget = await this.budgetsRepository.findOne({
-      where: { mda: grant.mda, fundingSource, budgetLine: budgetLine.name, fiscalYear: fiscalYear },
+      where: { mda: grant.mda, fundingSource: fundingSource, budgetLine: budgetLine.name, fiscalYear: fiscalYear, amount: grant.amount },
     });
 
     if (budget) {
       budget.amount += grant.amount;
     } else {
-      budget = this.budgetsRepository.create({ mda: grant.mda, fundingSource, budgetLine: budgetLine.name, fiscalYear: fiscalYear });
+      budget = this.budgetsRepository.create({ mda: grant.mda, fundingSource: fundingSource, budgetLine: budgetLine.name, fiscalYear: fiscalYear, amount: grant.amount });
     }
 
     await this.budgetsRepository.save(budget);
