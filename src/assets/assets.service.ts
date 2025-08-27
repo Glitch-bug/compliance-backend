@@ -37,38 +37,46 @@ export class AssetsService {
   //   return this.assetsRepository.find({ where: { mda: user.mda } });
   // }
 
-  async findAll(user: User, mda?: string): Promise<Asset[]> {
+  async findAll(user: User, mda?: string): Promise<any[]> {
     const universalRoles: Role[] = [Role.MoF, Role.IAA, Role.Minister, Role.Admin];
 
-    const qb = this.assetsRepository
-      .createQueryBuilder('asset')
-      .leftJoinAndSelect('asset.activeChecklist', 'activeChecklist')
-      .leftJoinAndSelect('activeChecklist.request', 'request')
-      .leftJoinAndSelect('request.fundingSource', 'fundingSource')
-      .addSelect(['fundingSource.name']); // pull in name only
-
+    let assets: Asset[];
     if (universalRoles.includes(user.role)) {
       if (mda && mda !== 'All MDAs') {
-        qb.where('asset.mda = :mda', { mda });
+        assets = await this.assetsRepository.find({
+          where: { mda },
+          relations: ['activeChecklist', 'activeChecklist.request', 'activeChecklist.request.fundingSource'],
+        });
+      } else {
+        assets = await this.assetsRepository.find({
+          relations: ['activeChecklist', 'activeChecklist.request', 'activeChecklist.request.fundingSource'],
+        });
       }
-      // else → no filter, return all assets
     } else {
-      // Restrict to user's own MDA
-      qb.where('asset.mda = :mda', { mda: user.mda });
+      assets = await this.assetsRepository.find({
+        where: { mda: user.mda },
+        relations: ['activeChecklist', 'activeChecklist.request', 'activeChecklist.request.fundingSource'],
+      });
     }
 
-    return qb.getMany();
+    return assets.map(asset => ({
+      id: asset.id,
+      name: asset.name,
+      category: asset.category,
+      acquiredDate: asset.acquiredDate,
+      value: asset.value,
+      mda: asset.mda,
+      createdAt: asset.createdAt,
+      updatedAt: asset.updatedAt,
+      fundingSourceName: asset.activeChecklist?.request?.fundingSource?.name ?? null, // ✅ only fundingSourceName
+    }));
   }
 
   async findOne(id: string): Promise<Asset> {
-    return this.assetsRepository
-      .createQueryBuilder('asset')
-      .leftJoinAndSelect('asset.activeChecklist', 'activeChecklist')
-      .leftJoinAndSelect('activeChecklist.request', 'request')
-      .leftJoinAndSelect('request.fundingSource', 'fundingSource')
-      .addSelect(['fundingSource.name'])
-      .where('asset.id = :id', { id })
-      .getOne();
+   return  this.assetsRepository.findOne({
+        where: { id: id },
+        relations: ['activeChecklist', 'activeChecklist.request', 'activeChecklist.request.fundingSource'],
+      });
   }
 
   async remove(id: string): Promise<void> {

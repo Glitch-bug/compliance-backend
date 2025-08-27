@@ -13,5 +13,5 @@ export class CreateActiveChecklistDto {
 
   @IsUUID()
   @IsNotEmpty()
-  budgetLineId: string;  
+  requestId: string;  
 }

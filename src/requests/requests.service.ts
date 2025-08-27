@@ -87,7 +87,7 @@ export class RequestsService {
     }
     var requests = await qb.getMany();
 
-    return { status: "success", message: "Request updated successfully", data: requests};
+    return { status: "success", message: "Requests fetched successfully", data: requests};
 
 
     // return qb.getMany();
