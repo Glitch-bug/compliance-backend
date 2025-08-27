@@ -62,9 +62,6 @@ export class RequestsService {
       .createQueryBuilder('request')
       .leftJoinAndSelect('request.fundingSource', 'fundingSource')
       .where('request.status IN (:...statuses)', { statuses: statusesForReview });
-
-    console.log(`HELLO THIS IS THE ${type}`);
-
     if (type === 'external') {
       // external: only Pending Review + fundingSource.name = 'soAndSo'
       qb.where('request.status = :pending', { pending: 'Pending Review' })
@@ -131,10 +128,11 @@ export class RequestsService {
 
     Object.assign(request, updateRequestDto);
     var savedRequest = await this.requestsRepository.save(request);
-    return { status: "success", message: "Request updated successfully", data: savedRequest };
-
-
-
+    var message =  "Request updated successfully!";
+    if(updateRequestDto.status !== null && updateRequestDto.status.trim() !== ""){
+      message = `Request status updated to ${updateRequestDto.status.toLowerCase()} successfully!`;
+    }
+    return { status: "success", message: message, data: savedRequest };
   }
 
 
