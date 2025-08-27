@@ -47,19 +47,19 @@ export class GrantsService {
     console.log(`budget line ${budgetLine.name}`);
 
 
-    budgetLine.amount = budgetLine.amount + grant.amount;
+    budgetLine.amount = Number(budgetLine.amount) + grant.amount;
     await this.budgetLineRepository.save(budgetLine);
 
     const fiscalYear = new Date().getFullYear();
     console.log(`fiscal Year ${fiscalYear}`);
     let budget = await this.budgetsRepository.findOne({where: { mda: grant.mda, fundingSource: fundingSource, budgetLine: budgetLine.name, fiscalYear: fiscalYear,}});
-    console.log(`budget ${JSON.stringify(budget)}`);
+    console.log(`budget ${budget.amount}`);
     if (budget) {
-      budget.amount += grant.amount;
+      budget.amount = Number(budget.amount) + grant.amount;
     } else {
       budget = this.budgetsRepository.create({ mda: grant.mda, fundingSource: fundingSource, budgetLine: budgetLine.name, fiscalYear: fiscalYear, amount: grant.amount });
     }
-
+    console.log(`budget ${budget.amount}`);
     await this.budgetsRepository.save(budget);
 
     // return {
