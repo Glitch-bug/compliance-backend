@@ -51,9 +51,7 @@ export class GrantsService {
 
     const fiscalYear = new Date(grant.createdAt).getFullYear();
 
-    let budget = await this.budgetsRepository.findOne({
-      where: { mda: grant.mda, fundingSource: fundingSource, budgetLine: budgetLine.name, fiscalYear: fiscalYear, amount: grant.amount },
-    });
+    let budget = await this.budgetsRepository.findOne({where: { mda: grant.mda, fundingSource: fundingSource, budgetLine: budgetLine.name, fiscalYear: fiscalYear,}});
 
     if (budget) {
       budget.amount += grant.amount;
