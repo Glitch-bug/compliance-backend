@@ -42,9 +42,10 @@ export class GrantsService {
     if (!fsEntity) {
       fsEntity = this.fundingSourceRepository.create({ name: fundingSource });
     }
-
-    var budgetLine = await this.budgetLineRepository.findOne({ where: { id: grant.budgetLineId,} }); 
     console.log(`grant amount ${grant.amount}`);
+    var budgetLine = await this.budgetLineRepository.findOne({ where: { id: grant.budgetLineId,} }); 
+    console.log(`budget line ${budgetLine.name}`);
+
 
     budgetLine.amount = budgetLine.amount + grant.amount;
     await this.budgetLineRepository.save(budgetLine);
@@ -52,7 +53,7 @@ export class GrantsService {
     const fiscalYear = new Date(grant.createdAt).getFullYear();
 
     let budget = await this.budgetsRepository.findOne({where: { mda: grant.mda, fundingSource: fundingSource, budgetLine: budgetLine.name, fiscalYear: fiscalYear,}});
-
+    console.log(`budget ${JSON.stringify(budget)}`);
     if (budget) {
       budget.amount += grant.amount;
     } else {
