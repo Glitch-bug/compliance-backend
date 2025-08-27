@@ -23,53 +23,105 @@ export class GrantsService {
     private readonly budgetsRepository: Repository<Budget>,
   ) { }
 
-  async create(createGrantDto: CreateGrantDto, user: User): Promise<Grant> {
-    console.log(`user fro backend: ${user.mda}`)
+  async create(createGrantDto: CreateGrantDto, user: User): Promise<{ grant: Grant; updatedBudgetLine: BudgetLine; updatedBudget: Budget }> {
     const grant = this.grantsRepository.create({
       ...createGrantDto,
       mda: user.mda,
       status: 'Active',
-    
     });
-    await this.updateFundingSourceForGrant(grant);
-    return this.grantsRepository.save(grant);
+    
+    // This helper function now returns the updated records
+    const { updatedBudgetLine, updatedBudget } = await this.updateBudgetsForGrant(grant);
+    
+    const savedGrant = await this.grantsRepository.save(grant);
+
+    return {
+      grant: savedGrant,
+      updatedBudgetLine,
+      updatedBudget,
+    };
   }
 
 
-  private async updateFundingSourceForGrant(grant: Grant) {
-    var fundingSource = "Grants & Donations";
+  private async updateBudgetsForGrant(grant: Grant): Promise<{ updatedBudgetLine: BudgetLine; updatedBudget: Budget }> {
+    const fundingSource = "Grants & Donations";
     let fsEntity = await this.fundingSourceRepository.findOne({ where: { name: fundingSource } });
     if (!fsEntity) {
       fsEntity = this.fundingSourceRepository.create({ name: fundingSource });
+      await this.fundingSourceRepository.save(fsEntity);
     }
-    console.log(`grant amount ${grant.amount} ${grant.createdAt}`);
-    var budgetLine = await this.budgetLineRepository.findOne({ where: { id: grant.budgetLineId,} }); 
-    console.log(`budget line ${budgetLine.name}`);
-
+    
+    const budgetLine = await this.budgetLineRepository.findOne({ where: { id: grant.budgetLineId } }); 
+    if (!budgetLine) {
+        throw new NotFoundException(`BudgetLine with ID "${grant.budgetLineId}" not found`);
+    }
 
     budgetLine.amount = Number(budgetLine.amount) + grant.amount;
-    await this.budgetLineRepository.save(budgetLine);
+    const updatedBudgetLine = await this.budgetLineRepository.save(budgetLine);
 
     const fiscalYear = new Date().getFullYear();
-    console.log(`fiscal Year ${fiscalYear}`);
-    let budget = await this.budgetsRepository.findOne({where: { mda: grant.mda, fundingSource: fundingSource, budgetLine: budgetLine.name, fiscalYear: fiscalYear,}});
-    // console.log(`budget ${budget.amount}`);
+    let budget = await this.budgetsRepository.findOne({ where: { mda: grant.mda, fundingSource: fundingSource, budgetLine: budgetLine.name, fiscalYear: fiscalYear }});
+    
     if (budget) {
-      console.log("check");
-      budget.amount = isNaN(Number(budget.amount))? 0 + grant.amount : budget.amount + grant.amount;
+      budget.amount = Number(budget.amount) + grant.amount;
     } else {
-      console.log("double check");
       budget = this.budgetsRepository.create({ mda: grant.mda, fundingSource: fundingSource, budgetLine: budgetLine.name, fiscalYear: fiscalYear, amount: grant.amount });
     }
-    console.log(`budget ${budget.amount}`);
-    await this.budgetsRepository.save(budget);
+    
+    const updatedBudget = await this.budgetsRepository.save(budget);
 
-    // return {
-    //   status: "success",
-    //   message: "Successfully performed consolidated budget increment.",
-    //   data: savedBudget
-    // };
+    console.log(JSON.stringify(updatedBudget));
+    return { updatedBudgetLine, updatedBudget };
   }
+
+  // async create(createGrantDto: CreateGrantDto, user: User): Promise<Grant> {
+  //   console.log(`user fro backend: ${user.mda}`)
+  //   const grant = this.grantsRepository.create({
+  //     ...createGrantDto,
+  //     mda: user.mda,
+  //     status: 'Active',
+    
+  //   });
+  //   await this.updateFundingSourceForGrant(grant);
+  //   return this.grantsRepository.save(grant);
+  // }
+
+
+  // private async updateFundingSourceForGrant(grant: Grant) {
+  //   var fundingSource = "Grants & Donations";
+  //   let fsEntity = await this.fundingSourceRepository.findOne({ where: { name: fundingSource } });
+  //   if (!fsEntity) {
+  //     fsEntity = this.fundingSourceRepository.create({ name: fundingSource });
+  //   }
+  //   console.log(`grant amount ${grant.amount} ${grant.createdAt}`);
+  //   var budgetLine = await this.budgetLineRepository.findOne({ where: { id: grant.budgetLineId,} }); 
+  //   console.log(`budget line ${budgetLine.name}`);
+
+
+  //   budgetLine.amount = Number(budgetLine.amount) + grant.amount;
+  //   await this.budgetLineRepository.save(budgetLine);
+
+  //   const fiscalYear = new Date().getFullYear();
+  //   console.log(`fiscal Year ${fiscalYear}`);
+  //   let budget = await this.budgetsRepository.findOne({where: { mda: grant.mda, fundingSource: fundingSource, budgetLine: budgetLine.name, fiscalYear: fiscalYear,}});
+  //   // console.log(`budget ${budget.amount}`);
+  //   if (budget) {
+  //     console.log(`check `);
+
+  //     budget.amount = isNaN(Number(budget.amount))? 0 + grant.amount : budget.amount + grant.amount;
+  //   } else {
+  //     console.log("double check");
+  //     budget = this.budgetsRepository.create({ mda: grant.mda, fundingSource: fundingSource, budgetLine: budgetLine.name, fiscalYear: fiscalYear, amount: grant.amount });
+  //   }
+  //   console.log(`budget ${budget.amount}`);
+  //   await this.budgetsRepository.save(budget);
+
+  //   // return {
+  //   //   status: "success",
+  //   //   message: "Successfully performed consolidated budget increment.",
+  //   //   data: savedBudget
+  //   // };
+  // }
 
   async findAll(user: User, mda?: string): Promise<Grant[]> {
     const universalRoles: Role[] = [Role.MoF, Role.IAA, Role.Minister, Role.Admin];
