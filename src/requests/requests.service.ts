@@ -55,6 +55,7 @@ export class RequestsService {
 
   // }
 
+
   async findForReview(type?: string): Promise<{ status: string; message: string; data:RequestEntity[];}>{
     const statusesForReview = ['Pending Review', 'Awaiting Co-Submitter Approval'];
 
@@ -122,7 +123,7 @@ export class RequestsService {
       throw new Error('Request not found');
     }
 
-    if (updateRequestDto.status.toLowerCase() === 'Approved'.toLowerCase()) {
+    if (updateRequestDto.status?.toLowerCase() === 'Approved'.toLowerCase()) {
       await this.createProjectChecklistForRequest(request);
     }
 
