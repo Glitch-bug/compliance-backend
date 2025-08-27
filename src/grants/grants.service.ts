@@ -53,9 +53,9 @@ export class GrantsService {
     const fiscalYear = new Date().getFullYear();
     console.log(`fiscal Year ${fiscalYear}`);
     let budget = await this.budgetsRepository.findOne({where: { mda: grant.mda, fundingSource: fundingSource, budgetLine: budgetLine.name, fiscalYear: fiscalYear,}});
-    console.log(`budget ${budget.amount}`);
+    // console.log(`budget ${budget.amount}`);
     if (budget) {
-      budget.amount = Number(budget.amount) + grant.amount;
+      budget.amount = isNaN(Number(budget.amount))? 0 + grant.amount : budget.amount + grant.amount;
     } else {
       budget = this.budgetsRepository.create({ mda: grant.mda, fundingSource: fundingSource, budgetLine: budgetLine.name, fiscalYear: fiscalYear, amount: grant.amount });
     }
