@@ -62,6 +62,7 @@ export class RequestsService {
     const qb = this.requestsRepository
       .createQueryBuilder('request')
       .leftJoinAndSelect('request.fundingSource', 'fundingSource')
+      .leftJoinAndSelect('request.budgetLine', 'budgetLine')
       .where('request.status IN (:...statuses)', { statuses: statusesForReview });
     if (type === 'external') {
       // external: only Pending Review + fundingSource.name = 'soAndSo'
