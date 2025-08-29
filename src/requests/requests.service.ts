@@ -47,7 +47,7 @@ export class RequestsService {
       }
 
     }
-    return this.requestsRepository.find({ where: [{ mda: user.mda }, { partnerMda: user.mda }] });
+    return this.requestsRepository.find({...queryOptions, where: [{ mda: user.mda }, { partnerMda: user.mda }] });
   }
 
   // async findForReview(type?: string): Promise<RequestEntity[]> {
