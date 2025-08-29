@@ -34,11 +34,16 @@ export class RequestsService {
   async findAll(user: User, mda?: string): Promise<RequestEntity[]> {
     // const universalRoles = ['MoF Compliance', 'IAA Auditor', 'Minister', 'System Admin'];
     const universalRoles: Role[] = [Role.MoF, Role.IAA, Role.Minister, Role.Admin];
+    const queryOptions: any = {
+      relations: ['fundingSource'], // 👈 load fundingSource relation
+    };
+
+    let requests: RequestEntity[];
     if (universalRoles.includes(user.role)) {
       if (mda && mda !== 'All MDAs') {
-        return this.requestsRepository.find({ where: [{ mda: mda }, { partnerMda: mda }] });
+        requests = await this.requestsRepository.find({...queryOptions, where: [{ mda: mda }, { partnerMda: mda }] });
       } else {
-        return this.requestsRepository.find();
+        return this.requestsRepository.find(queryOptions);
       }
 
     }

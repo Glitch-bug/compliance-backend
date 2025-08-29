@@ -25,7 +25,7 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   mda: string;
 
-  @Column({ name: 'is_active', default: true })
+  @Column({ name: 'is_active', default: false })
   isActive: boolean;
 
   @CreateDateColumn({ name: 'created_at' })
