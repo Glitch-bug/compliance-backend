@@ -52,6 +52,10 @@ export class AuthService {
       throw new UnauthorizedException('You can only access your assigned MDA');
     }
 
+    if (!user.isActive) {
+          throw new UnauthorizedException('"Your account is either deactived or not verified. Please contact a system administrator."');
+    }
+
     const payload: JwtPayload = { username: user.username };
     const accessToken = this.jwtService.sign(payload);
     this.logger.debug(`Generated JWT Token with payload ${JSON.stringify(payload)}`);
