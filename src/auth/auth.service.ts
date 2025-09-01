@@ -1,12 +1,14 @@
-import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
+import { Injectable, UnauthorizedException, Logger, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersRepository } from '../users/users.repository';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
-import { CreateUserDto } from './dto/create-user.dto'; 
+import { CreateUserDto } from './dto/create-user.dto';
 import { JwtPayload } from './jwt-payload.interface';
 import { User } from '../users/user.entity';
 import { Role } from 'src/users/roles.enum';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { FindManyOptions } from 'typeorm';
 
 @Injectable()
 export class AuthService {
@@ -19,10 +21,10 @@ export class AuthService {
   ) { }
 
 
-    /**
-   * Handles user creation by calling the repository.
-   * @param createUserDto - The user data to create.
-   */
+  /**
+ * Handles user creation by calling the repository.
+ * @param createUserDto - The user data to create.
+ */
   async signUp(createUserDto: CreateUserDto): Promise<void> {
     // The actual creation logic (hashing password, saving to DB)
     // is expected to be in the UsersRepository.
@@ -62,4 +64,44 @@ export class AuthService {
     return { accessToken, user: userProfile };
   }
 
+  async findAllPaginated(
+    page: number,
+    limit: number,
+    status: string,
+  ): Promise<{ data: User[]; total: number }> {
+    const options: FindManyOptions<User> = {
+      select: ['id', 'fullName', 'username', 'role', 'mda', 'isActive'],
+      take: limit,
+      skip: (page - 1) * limit,
+      order: { fullName: 'ASC' }
+    };
+
+    if (status === 'active') {
+      options.where = { isActive: true };
+    } else if (status === 'pending') {
+      options.where = { isActive: false };
+    }
+    
+    const [data, total] = await this.usersRepository.findAndCount(options);
+    return { data, total };
+  }
+
+  async findAll(active?: boolean): Promise<User[]> {
+    if (active !== null) {
+      return this.usersRepository.find({ where: { isActive: active } });
+    } else {
+      return this.usersRepository.find();
+    }
+  }
+
+  async updateUserStatus(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    const user = await this.usersRepository.findOneBy({ id });
+    if (!user) {
+      throw new NotFoundException(`User with ID "${id}" not found`);
+    }
+    user.isActive = updateUserDto.isActive;
+    await this.usersRepository.save(user);
+    delete user.passwordHash;
+    return user;
+  }
 }
